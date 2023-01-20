@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            url = "https://repo.isshoni.institute"
+        }
+    }
+}
+
+rootProject.name = 'kobayashi'
