@@ -24,7 +24,7 @@ dependencies {
         exclude (group: 'net.oneandone.reflections8', module: 'reflections8')
     }
 
-    testImplementation 'junit:junit:$junit_version'
+    testImplementation "junit:junit:$junit_version"
 }
 
 processResources {

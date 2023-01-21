@@ -5,7 +5,7 @@ import tv.isshoni.winry.api.annotation.Event;
 @Event(value = "mishima-config")
 public class MishimaConfigEvent {
 
-    private int port;
+    private int port = -1;
 
     public MishimaConfigEvent port(int port) {
         if (port <= 0) {
@@ -19,5 +19,9 @@ public class MishimaConfigEvent {
 
     public int getPort() {
         return this.port;
+    }
+
+    public boolean isValid() {
+        return this.port != -1;
     }
 }
