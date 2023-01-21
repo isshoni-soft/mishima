@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'tv.isshoni'
-version "$kobayashi_version"
+version "$mishima_version"
 
 repositories {
     mavenLocal()
@@ -14,10 +14,23 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    implementation "tv.isshoni.araragi:core:$araragi_version"
+    implementation "tv.isshoni.araragi:annotation:$araragi_version"
+    implementation "tv.isshoni.araragi:logging:$araragi_version"
+    implementation("tv.isshoni:winry:$winry_version") {
+        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
+        exclude (group: 'tv.isshoni.araragi', module: 'core')
+        exclude (group: 'tv.isshoni.araragi', module: 'logging')
+        exclude (group: 'net.oneandone.reflections8', module: 'reflections8')
+    }
+
+    testImplementation 'junit:junit:$junit_version'
 }
 
-test {
-    useJUnitPlatform()
+processResources {
+    filesMatching("**/mishima_version.properties") {
+        expand(
+                'version': project.version,
+        )
+    }
 }
