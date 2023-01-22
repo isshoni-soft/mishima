@@ -1,10 +1,10 @@
 package tv.isshoni.mishima.http.protocol;
 
-import tv.isshoni.mishima.http.HTTPRequest;
+import tv.isshoni.mishima.http.IncomingHTTPRequest;
 
 public interface IProtocol {
 
-    void handleConnection(HTTPRequest request);
+    void handleConnection(IncomingHTTPRequest request);
 
     String getVersion();
 }

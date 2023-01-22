@@ -54,7 +54,7 @@ public class HTTPService {
         }
 
         String httpVersion = versionTokens[1];
-        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion, client, in);
+        IncomingHTTPRequest request = new IncomingHTTPRequest(method, tokens[1], httpVersion, client, in);
 
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 

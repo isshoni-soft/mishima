@@ -3,7 +3,7 @@ package tv.isshoni.mishima.http;
 import java.io.Reader;
 import java.net.Socket;
 
-public class HTTPRequest {
+public class IncomingHTTPRequest {
 
     private final HTTPMethod method;
 
@@ -13,7 +13,7 @@ public class HTTPRequest {
     private final Socket clientSocket;
     private final Reader clientReader;
 
-    public HTTPRequest(HTTPMethod method, String path, String httpVersion, Socket clientSocket, Reader clientReader) {
+    public IncomingHTTPRequest(HTTPMethod method, String path, String httpVersion, Socket clientSocket, Reader clientReader) {
         this.method = method;
         this.path = path;
         this.httpVersion = httpVersion;
