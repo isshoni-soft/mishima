@@ -59,6 +59,10 @@ public class HTTPService {
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
         logger.info("Attempting handoff to protocol...");
-        protocolOptional.ifPresent(p -> p.handleConnection(request));
+        if (protocolOptional.isPresent()) {
+            protocolOptional.get().handleConnection(request);
+        } else {
+            throw new HTTPProtocolException(tokens[2] + " is not a supported HTTP version!");
+        }
     }
 }
