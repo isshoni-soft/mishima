@@ -3,7 +3,10 @@ package tv.isshoni.mishima.http;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
+import tv.isshoni.mishima.http.protocol.IProtocol;
+import tv.isshoni.mishima.http.protocol.ProtocolService;
 import tv.isshoni.winry.api.annotation.Event;
+import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Logger;
@@ -13,11 +16,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Optional;
 
 @Injected
 public class HTTPService {
 
     @Logger("HTTPService") private AraragiLogger logger;
+
+    @Inject private ProtocolService protocolService;
 
     @Listener(ConnectionEvent.class)
     @Async
@@ -30,8 +36,6 @@ public class HTTPService {
         String line = in.readLine();
         String[] tokens = line.split(" ");
 
-        logger.info("Received first line: " + line);
-
         if (tokens.length != 3) {
             throw new HTTPProtocolException("malformed first line");
         }
@@ -40,9 +44,21 @@ public class HTTPService {
         try {
             method = HTTPMethod.valueOf(tokens[0].toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new HTTPProtocolException(tokens[0] + " is not a valid HTTP method");
+            throw new HTTPProtocolException(tokens[0] + " is not a parsable HTTP method");
         }
 
-        logger.info("Detected method: " + method);
+        String[] versionTokens = tokens[2].split("/");
+
+        if (versionTokens.length != 2) {
+            throw new HTTPProtocolException(tokens[2] + " is not a parsable HTTP version!");
+        }
+
+        String httpVersion = versionTokens[1];
+        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion, client, in);
+
+        Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
+
+        logger.info("Attempting handoff to protocol...");
+        protocolOptional.ifPresent(p -> p.handleConnection(request));
     }
 }
