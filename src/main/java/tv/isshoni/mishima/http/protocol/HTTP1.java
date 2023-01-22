@@ -12,7 +12,7 @@ public class HTTP1 implements IProtocol {
 
     @Override
     public void handleConnection(HTTPRequest request) {
-        this.logger.info("Handoff successful, using HTTP Protocol: " + getVersion());
+        this.logger.debug("Handoff successful, using HTTP Protocol: " + getVersion());
     }
 
     @Override

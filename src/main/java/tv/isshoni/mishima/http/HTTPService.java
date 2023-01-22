@@ -58,7 +58,7 @@ public class HTTPService {
 
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
-        logger.info("Attempting handoff to protocol...");
+        logger.debug("Attempting handoff to protocol...");
         if (protocolOptional.isPresent()) {
             protocolOptional.get().handleConnection(request);
         } else {

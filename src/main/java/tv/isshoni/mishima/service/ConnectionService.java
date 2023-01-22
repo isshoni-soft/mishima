@@ -38,10 +38,10 @@ public class ConnectionService {
                 while (!this.socket.isClosed()) {
                     Socket client = this.socket.accept();
 
-                    logger.info("Accepted new connection!");
+                    this.logger.debug("Accepted new connection!");
 
                     try {
-                        context.getEventBus().fire(new ConnectionEvent(client));
+                        this.context.getEventBus().fire(new ConnectionEvent(client));
                     } catch (Throwable e) {
                         this.context.getExceptionManager().recover(e);
                     }

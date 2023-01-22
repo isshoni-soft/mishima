@@ -9,7 +9,7 @@ import tv.isshoni.winry.api.annotation.Loader;
 @Bootstrap(name = "Test Server",
            loader = @Loader(
            manualLoad = { Mishima.class }),
-           defaultLevel = Level.INFO)
+           defaultLevel = Level.DEBUG)
 public class TestServer {
 
     @Listener(MishimaConfigEvent.class)
