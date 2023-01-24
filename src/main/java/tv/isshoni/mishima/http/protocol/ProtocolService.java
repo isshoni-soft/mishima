@@ -23,7 +23,7 @@ public class ProtocolService {
     }
 
     void registerProtocol(String version, IProtocol protocol) {
-        this.logger.info("Registering protocol: " + version + "...");
+        this.logger.info("Registered protocol: " + version);
         this.protocol.put(version, protocol);
     }
 

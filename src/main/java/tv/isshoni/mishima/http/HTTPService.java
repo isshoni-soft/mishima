@@ -1,5 +1,7 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.araragi.data.Pair;
+import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
@@ -9,21 +11,44 @@ import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
-import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.transformer.Async;
+import tv.isshoni.winry.api.context.IWinryContext;
+import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Injected
 public class HTTPService {
 
-    @Logger("HTTPService") private AraragiLogger logger;
+    private final AraragiLogger logger;
 
     @Inject private ProtocolService protocolService;
+
+    private final IWinryContext context;
+
+    private final SubMap<HTTPMethod, String, HTTPHandler, HashMap<String, HTTPHandler>> handlerMap;
+
+    public HTTPService(@Context IWinryContext context) {
+        this.context = context;
+        this.logger = this.context.createLogger("HTTPService");
+        this.handlerMap = new SubMap<>(HashMap::new);
+    }
+
+    public void registerHTTPHandler(HTTPMethod httpMethod, Object object, IAnnotatedMethod method, String path) {
+        this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, method, object)));
+        logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
+    }
+
+    public void execute(HTTPMethod method, String path, Map<String, Object> data) {
+        this.handlerMap.get(method).get(path).execute(data);
+    }
 
     @Listener(ConnectionEvent.class)
     @Async

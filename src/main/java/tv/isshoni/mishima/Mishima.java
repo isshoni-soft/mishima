@@ -3,6 +3,7 @@ package tv.isshoni.mishima;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.mishima.event.MishimaInitEvent;
+import tv.isshoni.mishima.http.HTTPService;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
