@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.annotation.http;
+package tv.isshoni.mishima.annotation.http.method;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

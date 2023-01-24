@@ -1,7 +1,7 @@
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
-import tv.isshoni.mishima.annotation.http.GET;
+import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;

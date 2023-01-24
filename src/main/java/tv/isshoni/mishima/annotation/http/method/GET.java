@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.annotation.http;
+package tv.isshoni.mishima.annotation.http.method;
 
 import tv.isshoni.araragi.annotation.Processor;
 import tv.isshoni.araragi.annotation.Weight;

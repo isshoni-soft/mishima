@@ -1,6 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http;
 
-import tv.isshoni.mishima.annotation.http.GET;
+import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPService;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;

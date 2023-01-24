@@ -19,15 +19,10 @@ public class HTTP1 implements IProtocol {
 
     @Override
     public void handleConnection(IncomingHTTPRequest request) {
-        this.logger.debug("Handoff successful, using HTTP Protocol: " + getVersion());
+        this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>();
 
         this.service.execute(request.getMethod(), request.getPath(), data);
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.1";
     }
 }
