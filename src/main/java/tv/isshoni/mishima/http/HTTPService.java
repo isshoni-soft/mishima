@@ -42,6 +42,10 @@ public class HTTPService {
     }
 
     public void registerHTTPHandler(HTTPMethod httpMethod, Object object, IAnnotatedMethod method, String path) {
+        if (this.handlerMap.containsKey(httpMethod, path)) {
+            throw new IllegalStateException("cannot register duplicate path: " + path + " for method: " + httpMethod);
+        }
+
         this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, method, object)));
         logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
     }

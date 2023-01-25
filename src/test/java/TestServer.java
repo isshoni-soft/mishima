@@ -26,4 +26,9 @@ public class TestServer {
     public void index() {
         logger.info("Index hit!");
     }
+
+    @GET("/test")
+    public void test() {
+        logger.info("Test!");
+    }
 }

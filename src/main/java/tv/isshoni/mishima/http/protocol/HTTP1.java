@@ -22,6 +22,9 @@ public class HTTP1 implements IProtocol {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>();
+        if (request.getPath().matches("[?]")) {
+            logger.info("Request with query parameters found!");
+        }
 
         this.service.execute(request.getMethod(), request.getPath(), data);
     }

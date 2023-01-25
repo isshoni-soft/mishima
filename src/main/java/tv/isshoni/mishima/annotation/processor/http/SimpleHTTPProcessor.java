@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http;
 
+import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPService;
@@ -22,7 +23,7 @@ public abstract class SimpleHTTPProcessor<A extends Annotation> implements IWinr
 
     public SimpleHTTPProcessor(HTTPService service, Class<A> clazz) {
         this.service = service;
-        this.incompatible = INCOMPATIBLE.stream().filter(c -> c.equals(clazz)).toList();
+        this.incompatible = INCOMPATIBLE.stream().filter(c -> !c.equals(clazz)).toList();
     }
 
     public abstract HTTPMethod getHTTPMethod();
@@ -31,7 +32,13 @@ public abstract class SimpleHTTPProcessor<A extends Annotation> implements IWinr
 
     @Override
     public void executeMethod(IAnnotatedMethod method, Object target, A annotation) {
-        this.service.registerHTTPHandler(getHTTPMethod(), target, method, getPath(annotation));
+        String path = getPath(annotation);
+
+        if (!Mishima.PATH_LEGAL.matcher(path).matches()) {
+            throw new IllegalStateException(path + " is not a valid http path");
+        }
+
+        this.service.registerHTTPHandler(getHTTPMethod(), target, method, path);
     }
 
     @Override

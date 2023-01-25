@@ -3,7 +3,6 @@ package tv.isshoni.mishima;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.mishima.event.MishimaInitEvent;
-import tv.isshoni.mishima.http.HTTPService;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -13,10 +12,14 @@ import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.service.VersionService;
 
+import java.util.regex.Pattern;
+
 @Loader(
         loadPackage = "tv.isshoni.mishima"
 )
 public class Mishima {
+
+    public static final Pattern PATH_LEGAL = Pattern.compile("[/a-z0-9]+", Pattern.CASE_INSENSITIVE);
 
     @Logger("Mishima") private AraragiLogger logger;
 
