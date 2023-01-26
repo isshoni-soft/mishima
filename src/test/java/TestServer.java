@@ -23,12 +23,8 @@ public class TestServer {
     }
 
     @GET("/")
-    public void index() {
+    public String index() {
         logger.info("Index hit!");
-    }
-
-    @GET("/test")
-    public void test() {
-        logger.info("Test!");
+        return "Hello, World!";
     }
 }

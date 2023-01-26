@@ -35,9 +35,12 @@ public class HTTPService {
 
     private final SubMap<HTTPMethod, String, HTTPHandler, HashMap<String, HTTPHandler>> handlerMap;
 
+    private final Map<Class<?>, IHTTPSerializer<?>> serializers;
+
     public HTTPService(@Context IWinryContext context) {
         this.context = context;
         this.logger = this.context.createLogger("HTTPService");
+        this.serializers = new HashMap<>();
         this.handlerMap = new SubMap<>(HashMap::new);
     }
 
@@ -50,8 +53,24 @@ public class HTTPService {
         logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
     }
 
-    public void execute(HTTPMethod method, String path, Map<String, Object> data) {
-        this.handlerMap.get(method).get(path).execute(data);
+    public boolean hasSerializer(Class<?> type) {
+        return this.serializers.containsKey(type);
+    }
+
+    public <O> IHTTPSerializer<O> getSerializer(Class<O> type) {
+        return (IHTTPSerializer<O>) this.serializers.get(type);
+    }
+
+    public void registerHTTPSerializer(Class<?> type, IHTTPSerializer<?> serializer) {
+        this.serializers.put(type, serializer);
+    }
+
+    public boolean hasHandler(HTTPMethod method, String path) {
+        return this.handlerMap.containsKey(method, path);
+    }
+
+    public <R> R execute(HTTPMethod method, String path, Map<String, Object> data) {
+        return this.handlerMap.get(method).get(path).execute(data);
     }
 
     @Listener(ConnectionEvent.class)
@@ -83,7 +102,7 @@ public class HTTPService {
         }
 
         String httpVersion = versionTokens[1];
-        IncomingHTTPRequest request = new IncomingHTTPRequest(method, tokens[1], httpVersion, client, in);
+        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion, client, in);
 
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 

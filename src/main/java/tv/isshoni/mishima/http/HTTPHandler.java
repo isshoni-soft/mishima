@@ -3,7 +3,6 @@ package tv.isshoni.mishima.http;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class HTTPHandler {
@@ -20,8 +19,8 @@ public class HTTPHandler {
         this.target = target;
     }
 
-    public void execute(Map<String, Object> provided) {
-        this.context.getMetaManager().execute(this.method, this.target, provided);
+    public <R> R execute(Map<String, Object> provided) {
+        return this.context.getMetaManager().execute(this.method, this.target, provided);
     }
 
     public IAnnotatedMethod getMethod() {

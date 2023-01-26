@@ -1,9 +1,11 @@
 package tv.isshoni.mishima.http;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.Reader;
 import java.net.Socket;
 
-public class IncomingHTTPRequest {
+public class HTTPRequest implements Closeable {
 
     private final HTTPMethod method;
 
@@ -13,7 +15,7 @@ public class IncomingHTTPRequest {
     private final Socket clientSocket;
     private final Reader clientReader;
 
-    public IncomingHTTPRequest(HTTPMethod method, String path, String httpVersion, Socket clientSocket, Reader clientReader) {
+    public HTTPRequest(HTTPMethod method, String path, String httpVersion, Socket clientSocket, Reader clientReader) {
         this.method = method;
         this.path = path;
         this.httpVersion = httpVersion;
@@ -39,5 +41,15 @@ public class IncomingHTTPRequest {
 
     public Reader getClientReader() {
         return this.clientReader;
+    }
+
+    @Override
+    public String toString() {
+        return this.method + " : " + this.path;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.clientSocket.close();
     }
 }

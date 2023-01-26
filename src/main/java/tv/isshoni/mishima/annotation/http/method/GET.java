@@ -2,7 +2,7 @@ package tv.isshoni.mishima.annotation.http.method;
 
 import tv.isshoni.araragi.annotation.Processor;
 import tv.isshoni.araragi.annotation.Weight;
-import tv.isshoni.mishima.annotation.processor.http.GETProcessor;
+import tv.isshoni.mishima.annotation.processor.http.method.GETProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
