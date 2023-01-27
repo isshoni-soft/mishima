@@ -16,10 +16,7 @@ import tv.isshoni.winry.api.annotation.transformer.Async;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -76,12 +73,10 @@ public class HTTPService {
     @Listener(ConnectionEvent.class)
     @Async
     public void handleNewConnection(@Event ConnectionEvent event) throws IOException {
-        Socket client = event.getClient();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        HTTPConnection connection = event.getConnection();
 
         // PROCESS FIRST LINE
-        String line = in.readLine();
+        String line = connection.readLine();
         String[] tokens = line.split(" ");
 
         if (tokens.length != 3) {
@@ -102,8 +97,7 @@ public class HTTPService {
         }
 
         String httpVersion = versionTokens[1];
-        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion, client, in);
-
+        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion);
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
         logger.debug("Attempting handoff to protocol...");

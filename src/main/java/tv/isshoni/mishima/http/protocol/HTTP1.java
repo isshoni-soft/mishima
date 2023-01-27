@@ -3,10 +3,13 @@ package tv.isshoni.mishima.http.protocol;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.annotation.http.Protocol;
 import tv.isshoni.mishima.event.HTTPErrorEvent;
+import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.mishima.http.HTTPErrorType;
+import tv.isshoni.mishima.http.HTTPRequest;
 import tv.isshoni.mishima.http.HTTPResponse;
 import tv.isshoni.mishima.http.HTTPService;
-import tv.isshoni.mishima.http.HTTPRequest;
+import tv.isshoni.mishima.http.HTTPStatus;
+import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.context.IWinryContext;
@@ -25,7 +28,7 @@ public class HTTP1 implements IProtocol {
     @Inject private IWinryContext context;
 
     @Override
-    public void handleConnection(HTTPRequest request) {
+    public void handleConnection(HTTPRequest request, HTTPConnection connection) {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>();
@@ -44,7 +47,7 @@ public class HTTP1 implements IProtocol {
             }
 
             if (!errorEvent.isCancelled()) {
-                // TODO: Send back error code 404 & close client socket
+                send(request, new HTTPResponse(HTTPStatus.NOT_FOUND, "Not Found"), connection);
             }
 
             return;
@@ -53,11 +56,24 @@ public class HTTP1 implements IProtocol {
         logger.info("Exec: " + request);
         Object result = this.service.execute(request.getMethod(), request.getPath(), data);
 
+        HTTPResponse response = null;
+        if (HTTPResponse.class.isAssignableFrom(result.getClass())) {
+            response = (HTTPResponse) result;
+        }
 
+        if (response == null && this.service.hasSerializer(result.getClass())) {
+            response = new HTTPResponse(HTTPStatus.OK, ((IHTTPSerializer<Object>) this.service.getSerializer(result.getClass())).serialize(result));
+        }
+
+        send(request, response, connection);
     }
 
     @Override
-    public void send(HTTPResponse response) {
+    public void send(HTTPRequest request, HTTPResponse response, HTTPConnection connection) {
+        if (response == null) {
+            throw new NullPointerException("Unable to serialize response for request: " + request);
+        }
 
+//        request.writeToClient("HTTP/1.1 " + response.getCode() + " " + response.getStatus().name());
     }
 }
