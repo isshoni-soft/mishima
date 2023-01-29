@@ -2,6 +2,7 @@ package tv.isshoni.mishima.http;
 
 import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.SubMap;
+import tv.isshoni.araragi.data.collection.map.TypeMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
@@ -37,7 +38,7 @@ public class HTTPService {
     public HTTPService(@Context IWinryContext context) {
         this.context = context;
         this.logger = this.context.createLogger("HTTPService");
-        this.serializers = new HashMap<>();
+        this.serializers = new TypeMap<>();
         this.handlerMap = new SubMap<>(HashMap::new);
 
         registerHTTPSerializer(String.class, s -> s);

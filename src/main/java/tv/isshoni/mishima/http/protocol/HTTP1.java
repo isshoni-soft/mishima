@@ -63,7 +63,7 @@ public class HTTP1 implements IProtocol {
             return;
         }
 
-        logger.info("Exec: " + request);
+        logger.info(request.toString());
         Object result = this.service.execute(request.getMethod(), request.getPath(), data);
 
         HTTPResponse response = null;

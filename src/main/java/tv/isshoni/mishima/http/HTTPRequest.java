@@ -27,6 +27,6 @@ public class HTTPRequest {
 
     @Override
     public String toString() {
-        return this.method + " : " + this.path;
+        return this.method + " " + this.path;
     }
 }
