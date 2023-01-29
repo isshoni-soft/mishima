@@ -12,7 +12,7 @@ import tv.isshoni.winry.api.annotation.Logger;
 @Bootstrap(name = "Test Server",
            loader = @Loader(
            manualLoad = { Mishima.class }),
-           defaultLevel = Level.INFO)
+           defaultLevel = Level.DEBUG)
 public class TestServer {
 
     @Logger("TestServer") private AraragiLogger logger;

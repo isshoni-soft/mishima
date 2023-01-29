@@ -1,5 +1,8 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.araragi.logging.AraragiLogger;
+import tv.isshoni.winry.internal.model.logging.ILoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -9,20 +12,24 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public class HTTPConnection implements Closeable {
-    
+
+    private final AraragiLogger logger;
+
     private final Socket socket;
     
     private final BufferedReader clientReader;
     
     private final BufferedWriter clientWriter;
     
-    public HTTPConnection(Socket socket) throws IOException {
+    public HTTPConnection(Socket socket, ILoggerFactory loggerFactory) throws IOException {
+        this.logger = loggerFactory.createLogger("Conn" + socket.getRemoteSocketAddress().toString());
         this.socket = socket;
         this.clientReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.clientWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
     public void write(String line) {
+        logger.debug("-> " + line);
         try {
             this.clientWriter.write(line + "\n");
         } catch (IOException e) { /* Swallowed */ }

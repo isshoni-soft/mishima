@@ -39,14 +39,16 @@ public class HTTPService {
         this.logger = this.context.createLogger("HTTPService");
         this.serializers = new HashMap<>();
         this.handlerMap = new SubMap<>(HashMap::new);
+
+        registerHTTPSerializer(String.class, s -> s);
     }
 
-    public void registerHTTPHandler(HTTPMethod httpMethod, Object object, IAnnotatedMethod method, String path) {
+    public void registerHTTPHandler(HTTPMethod httpMethod, MIMEType mimeType, Object object, IAnnotatedMethod method, String path) {
         if (this.handlerMap.containsKey(httpMethod, path)) {
             throw new IllegalStateException("cannot register duplicate path: " + path + " for method: " + httpMethod);
         }
 
-        this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, method, object)));
+        this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, mimeType, method, object)));
         logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
     }
 
@@ -58,7 +60,7 @@ public class HTTPService {
         return (IHTTPSerializer<O>) this.serializers.get(type);
     }
 
-    public void registerHTTPSerializer(Class<?> type, IHTTPSerializer<?> serializer) {
+    public <O> void registerHTTPSerializer(Class<O> type, IHTTPSerializer<O> serializer) {
         this.serializers.put(type, serializer);
     }
 
@@ -66,8 +68,12 @@ public class HTTPService {
         return this.handlerMap.containsKey(method, path);
     }
 
+    public HTTPHandler getHandler(HTTPMethod method, String path) {
+        return this.handlerMap.get(method).get(path);
+    }
+
     public <R> R execute(HTTPMethod method, String path, Map<String, Object> data) {
-        return this.handlerMap.get(method).get(path).execute(data);
+        return getHandler(method, path).execute(data);
     }
 
     @Listener(ConnectionEvent.class)
@@ -102,7 +108,7 @@ public class HTTPService {
 
         logger.debug("Attempting handoff to protocol...");
         if (protocolOptional.isPresent()) {
-            protocolOptional.get().handleConnection(request);
+            protocolOptional.get().handleConnection(request, connection);
         } else {
             throw new HTTPProtocolException(tokens[2] + " is not a supported HTTP version!");
         }

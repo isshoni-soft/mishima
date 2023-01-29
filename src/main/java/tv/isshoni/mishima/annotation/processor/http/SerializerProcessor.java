@@ -21,6 +21,6 @@ public class SerializerProcessor implements IWinryAnnotationProcessor<HTTPSerial
             throw new IllegalStateException("@HTTPSerializer on non-IHTTPSerializer class");
         }
 
-        this.service.registerHTTPSerializer(annotation.value(), (IHTTPSerializer<?>) clazz.getInstance());
+        this.service.registerHTTPSerializer((Class<Object>) annotation.value(), (IHTTPSerializer<Object>) clazz.getInstance());
     }
 }

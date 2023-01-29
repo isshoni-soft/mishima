@@ -11,12 +11,19 @@ public class HTTPHandler {
 
     private final IAnnotatedMethod method;
 
+    private final MIMEType mimeType;
+
     private final Object target;
 
-    public HTTPHandler(IWinryContext context, IAnnotatedMethod method, Object target) {
+    public HTTPHandler(IWinryContext context, MIMEType mimeType, IAnnotatedMethod method, Object target) {
         this.context = context;
+        this.mimeType = mimeType;
         this.method = method;
         this.target = target;
+    }
+
+    public MIMEType getMIMEType() {
+        return this.mimeType;
     }
 
     public <R> R execute(Map<String, Object> provided) {

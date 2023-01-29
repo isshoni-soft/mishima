@@ -41,7 +41,7 @@ public class ConnectionService {
                     this.logger.debug("Accepted new connection!");
 
                     try {
-                        this.context.getEventBus().fire(new ConnectionEvent(client));
+                        this.context.getEventBus().fire(new ConnectionEvent(client, this.context.getLoggerFactory()));
                     } catch (Throwable e) {
                         this.context.getExceptionManager().recover(e);
                     }

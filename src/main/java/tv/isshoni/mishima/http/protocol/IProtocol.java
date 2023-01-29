@@ -8,5 +8,5 @@ public interface IProtocol {
 
     void handleConnection(HTTPRequest request, HTTPConnection connection);
 
-    void send(HTTPRequest request, HTTPResponse response, HTTPConnection connection);
+    void respond(HTTPRequest request, HTTPResponse response, HTTPConnection connection);
 }

@@ -4,11 +4,25 @@ public class HTTPResponse {
 
     private final HTTPStatus code;
 
-    private final String response;
+    private final MIMEType mimeType;
 
-    public HTTPResponse(HTTPStatus code, String response) {
+    private final HTTPHeaders headers;
+
+    private final String body;
+
+    public HTTPResponse(HTTPStatus code, MIMEType mimeType, HTTPHeaders headers, String body) {
         this.code = code;
-        this.response = response;
+        this.mimeType = mimeType;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    public HTTPHeaders getHeaders() {
+        return this.headers;
+    }
+
+    public MIMEType getMIMEType() {
+        return this.mimeType;
     }
 
     public HTTPStatus getStatus() {
@@ -19,7 +33,7 @@ public class HTTPResponse {
         return this.code.getCode();
     }
 
-    public String getResponse() {
-        return this.response;
+    public String getBody() {
+        return this.body;
     }
 }

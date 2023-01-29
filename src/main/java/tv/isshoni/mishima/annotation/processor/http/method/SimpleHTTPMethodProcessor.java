@@ -4,6 +4,7 @@ import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPService;
+import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
 
@@ -34,6 +35,8 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     public abstract String getPath(A annotation);
 
+    public abstract MIMEType getMIMEType(A annotation);
+
     @Override
     public void executeMethod(IAnnotatedMethod method, Object target, A annotation) {
         String path = getPath(annotation);
@@ -47,7 +50,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
             throw except;
         }
 
-        this.service.registerHTTPHandler(getHTTPMethod(), target, method, path);
+        this.service.registerHTTPHandler(getHTTPMethod(), getMIMEType(annotation), target, method, path);
     }
 
     @Override
