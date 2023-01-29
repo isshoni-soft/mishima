@@ -92,7 +92,7 @@ public class HTTP1 implements IProtocol {
 
         response.getHeaders().forEach((header, value) -> connection.write(header + ": " + value));
 
-        connection.write("");
+        connection.write(""); // needs blank line between headers & content
         connection.write(response.getBody());
 
         try {
