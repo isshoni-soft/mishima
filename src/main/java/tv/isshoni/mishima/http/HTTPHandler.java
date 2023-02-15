@@ -1,7 +1,7 @@
 package tv.isshoni.mishima.http;
 
 import tv.isshoni.winry.api.context.IWinryContext;
-import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
+import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 import java.util.Map;
 

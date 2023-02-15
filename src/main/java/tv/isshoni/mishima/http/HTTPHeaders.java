@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.service.VersionService;
 
 import java.util.Collections;
@@ -16,7 +17,7 @@ public class HTTPHeaders {
 
     private final Map<String, String> headers;
 
-    public HTTPHeaders(VersionService versionService) {
+    public HTTPHeaders(@Inject VersionService versionService) {
         this.headers = new HashMap<>();
 
         addHeader(DATE, new Date().toString());

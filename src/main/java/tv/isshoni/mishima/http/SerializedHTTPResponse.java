@@ -1,14 +1,18 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.service.ObjectFactory;
+
 public class SerializedHTTPResponse extends HTTPResponse {
 
     private final Object body;
 
     private final HTTPService service;
 
-    public SerializedHTTPResponse(HTTPService service, HTTPStatus code, MIMEType mimeType, HTTPHeaders headers,
+    public SerializedHTTPResponse(@Inject HTTPService service, HTTPStatus code, MIMEType mimeType, HTTPHeaders headers,
                                   Object body) {
         super(code, mimeType, headers, null);
+
         this.service = service;
         this.body = body;
 
@@ -17,8 +21,9 @@ public class SerializedHTTPResponse extends HTTPResponse {
         }
     }
 
-    public SerializedHTTPResponse(HTTPService service, HTTPStatus code, Object body) {
-        super(code, null, new HTTPHeaders(), body);
+    public SerializedHTTPResponse(@Inject HTTPService service, @Inject ObjectFactory factory, HTTPStatus code,
+                                  Object body) {
+        this(service, code, null, factory.construct(HTTPHeaders.class), body);
     }
 
     @Override

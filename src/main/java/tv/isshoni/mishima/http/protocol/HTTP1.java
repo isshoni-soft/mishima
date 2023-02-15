@@ -16,8 +16,9 @@ import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
-import tv.isshoni.winry.api.context.IWinryContext;
+import tv.isshoni.winry.api.context.IEventBus;
 import tv.isshoni.winry.api.exception.EventExecutionException;
+import tv.isshoni.winry.api.service.ObjectFactory;
 import tv.isshoni.winry.api.service.VersionService;
 
 import java.io.IOException;
@@ -33,14 +34,16 @@ public class HTTP1 implements IProtocol {
 
     @Inject private VersionService versionService;
 
-    @Inject private IWinryContext context;
+    @Inject private IEventBus eventBus;
+
+    @Inject private ObjectFactory objectFactory;
 
     @Override
     public void handleConnection(HTTPRequest request, HTTPConnection connection) {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>();
-        HTTPHeaders responseHeaders = new HTTPHeaders(this.versionService);
+        HTTPHeaders responseHeaders = this.objectFactory.construct(HTTPHeaders.class);
         if (request.getPath().matches("[?]")) {
             logger.info("Request with query parameters found!");
         }
@@ -50,7 +53,7 @@ public class HTTP1 implements IProtocol {
 
             HTTPErrorEvent errorEvent;
             try {
-                errorEvent = this.context.getEventBus().fire(new HTTPErrorEvent(HTTPErrorType.NOT_FOUND, request));
+                errorEvent = this.eventBus.fire(new HTTPErrorEvent(HTTPErrorType.NOT_FOUND, request));
             } catch (EventExecutionException e) {
                 throw Exceptions.rethrow(e);
             }

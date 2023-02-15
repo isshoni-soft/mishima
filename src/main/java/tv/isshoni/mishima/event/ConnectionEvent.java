@@ -2,7 +2,7 @@ package tv.isshoni.mishima.event;
 
 import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.winry.api.annotation.Event;
-import tv.isshoni.winry.internal.model.logging.ILoggerFactory;
+import tv.isshoni.winry.api.context.ILoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;

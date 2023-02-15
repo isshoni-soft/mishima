@@ -4,7 +4,7 @@ import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.HTTPService;
+import tv.isshoni.mishima.http.HTTPStatus;
 import tv.isshoni.mishima.http.SerializedHTTPResponse;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
@@ -12,6 +12,7 @@ import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
 import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.service.ObjectFactory;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
@@ -32,7 +33,7 @@ public class TestServer {
     }
 
     @GET("/test")
-    public HTTPResponse test(@Inject HTTPService service) {
-        return new SerializedHTTPResponse(service, )
+    public HTTPResponse test(@Inject ObjectFactory factory) {
+        return factory.construct(SerializedHTTPResponse.class, HTTPStatus.OK, "Serialized Content!");
     }
 }

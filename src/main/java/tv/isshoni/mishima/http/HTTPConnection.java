@@ -1,7 +1,7 @@
 package tv.isshoni.mishima.http;
 
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.winry.internal.model.logging.ILoggerFactory;
+import tv.isshoni.winry.api.context.ILoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

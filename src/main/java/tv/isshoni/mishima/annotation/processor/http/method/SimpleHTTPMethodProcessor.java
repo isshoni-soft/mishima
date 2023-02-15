@@ -6,7 +6,8 @@ import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPService;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
-import tv.isshoni.winry.internal.model.meta.IAnnotatedMethod;
+import tv.isshoni.winry.api.context.IWinryContext;
+import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedList;
@@ -20,10 +21,13 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     protected final List<Class<? extends Annotation>> incompatible;
 
+    protected final IWinryContext context;
+
     protected final HTTPService service;
 
-    public SimpleHTTPMethodProcessor(HTTPService service, Class<A> clazz) {
+    public SimpleHTTPMethodProcessor(HTTPService service, IWinryContext context, Class<A> clazz) {
         this.service = service;
+        this.context = context;
         this.incompatible = INCOMPATIBLE.stream().filter(c -> !c.equals(clazz)).toList();
     }
 
@@ -56,5 +60,10 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
     @Override
     public List<Class<? extends Annotation>> getIncompatibleWith(A annotation) {
         return this.incompatible;
+    }
+
+    @Override
+    public IWinryContext getContext() {
+        return this.context;
     }
 }
