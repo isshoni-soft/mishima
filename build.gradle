@@ -14,15 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation "tv.isshoni.araragi:core:$araragi_version"
-    implementation "tv.isshoni.araragi:annotation:$araragi_version"
-    implementation "tv.isshoni.araragi:logging:$araragi_version"
-    implementation("tv.isshoni:winry:$winry_version") {
-        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
-        exclude (group: 'tv.isshoni.araragi', module: 'core')
-        exclude (group: 'tv.isshoni.araragi', module: 'logging')
-        exclude (group: 'net.oneandone.reflections8', module: 'reflections8')
-    }
+    api "tv.isshoni:winry:$winry_version"
 
     testImplementation "junit:junit:$junit_version"
 }
