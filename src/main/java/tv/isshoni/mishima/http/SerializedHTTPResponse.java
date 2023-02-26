@@ -23,7 +23,7 @@ public class SerializedHTTPResponse extends HTTPResponse {
 
     public SerializedHTTPResponse(@Inject HTTPService service, @Inject ObjectFactory factory, HTTPStatus code,
                                   Object body) {
-        this(service, code, null, factory.construct(HTTPHeaders.class), body);
+        this(service, code, MIMEType.TEXT, factory.construct(HTTPHeaders.class), body);
     }
 
     @Override
