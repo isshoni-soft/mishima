@@ -2,8 +2,11 @@ package tv.isshoni.mishima.http.protocol;
 
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
+import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.Protocol;
+import tv.isshoni.mishima.annotation.processor.http.parameter.QueryParameterProcessor;
 import tv.isshoni.mishima.event.HTTPErrorEvent;
+import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
 import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.mishima.http.HTTPErrorType;
 import tv.isshoni.mishima.http.HTTPHandler;
@@ -43,12 +46,29 @@ public class HTTP1 implements IProtocol {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>();
+        String path = request.getPath();
         HTTPHeaders responseHeaders = this.objectFactory.construct(HTTPHeaders.class);
-        if (request.getPath().matches("[?]")) {
-            logger.info("Request with query parameters found!");
+        if (path.matches("[?]")) {
+            String queryParams = path.substring(path.lastIndexOf("?"));
+
+            String[] serializedEntries = queryParams.split("&");
+
+            Map<String, String> entries = new HashMap<>();
+
+            Streams.to(serializedEntries).forEach(e -> {
+                String[] tokens = e.split("=");
+
+                if (tokens.length != 2) {
+                    throw new IllegalStateException("Malformed query parameter!");
+                }
+
+                entries.put(tokens[0], tokens[1]);
+            });
+
+            entries.forEach((k, v) -> data.put(QueryParameterProcessor.QUERY_PARAMETER_DATA_PREFIX + k, v));
         }
 
-        if (!this.service.hasHandler(request.getMethod(), request.getPath())) {
+        if (!this.service.hasHandler(request.getMethod(), path)) {
             logger.warn("No handler registered for: " + request);
 
             HTTPErrorEvent errorEvent;
@@ -67,10 +87,17 @@ public class HTTP1 implements IProtocol {
         }
 
         logger.info(request.toString());
-        Object result = this.service.execute(request.getMethod(), request.getPath(), data);
 
+        Object result = null;
         HTTPResponse response = null;
-        if (HTTPResponse.class.isAssignableFrom(result.getClass())) {
+        try {
+            result = this.service.execute(request.getMethod(), request.getPath(), data);
+        } catch (MissingRequiredParameterException e) {
+            response = new HTTPResponse(HTTPStatus.BAD_REQUEST, MIMEType.TEXT,
+                    this.objectFactory.construct(HTTPHeaders.class), "Missing parameter: " + e.getParameter());
+        }
+
+        if (response != null || HTTPResponse.class.isAssignableFrom(result.getClass())) {
             response = (HTTPResponse) result;
         }
 
