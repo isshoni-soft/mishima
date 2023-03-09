@@ -2,13 +2,9 @@ package tv.isshoni.mishima.http.protocol;
 
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.Protocol;
-import tv.isshoni.mishima.annotation.processor.http.parameter.QueryParameterProcessor;
-import tv.isshoni.mishima.event.HTTPErrorEvent;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
 import tv.isshoni.mishima.http.HTTPConnection;
-import tv.isshoni.mishima.http.HTTPErrorType;
 import tv.isshoni.mishima.http.HTTPHandler;
 import tv.isshoni.mishima.http.HTTPHeaders;
 import tv.isshoni.mishima.http.HTTPProtocolExceptionHandler;
@@ -23,11 +19,11 @@ import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.annotation.exception.ExceptionHandler;
 import tv.isshoni.winry.api.context.IEventBus;
 import tv.isshoni.winry.api.context.IExceptionManager;
-import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.service.ObjectFactory;
 import tv.isshoni.winry.api.service.VersionService;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,45 +45,18 @@ public class HTTP1 implements IProtocol {
     @Override
     @ExceptionHandler(HTTPProtocolExceptionHandler.class)
     public void handleConnection(HTTPRequest request, HTTPConnection connection) {
+        Method enclosing = new Object(){}.getClass().getEnclosingMethod();
+
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>(request.getData());
         String path = request.getPath();
         HTTPHeaders responseHeaders = this.objectFactory.construct(HTTPHeaders.class);
-        if (path.matches("[?]")) {
-            String queryParams = path.substring(path.lastIndexOf("?"));
-
-            String[] serializedEntries = queryParams.split("&");
-
-            Map<String, String> entries = new HashMap<>();
-
-            Streams.to(serializedEntries).forEach(e -> {
-                String[] tokens = e.split("=");
-
-                if (tokens.length != 2) {
-                    throw new IllegalStateException("Malformed query parameter!");
-                }
-
-                entries.put(tokens[0], tokens[1]);
-            });
-
-            entries.forEach((k, v) -> data.put(QueryParameterProcessor.QUERY_PARAMETER_DATA_PREFIX + k, v));
-        }
 
         if (!this.service.hasHandler(request.getMethod(), path)) {
             logger.warn("No handler registered for: " + request);
-
-            HTTPErrorEvent errorEvent;
-            try {
-                errorEvent = this.eventBus.fire(new HTTPErrorEvent(HTTPErrorType.NOT_FOUND, request));
-            } catch (EventExecutionException e) {
-                throw Exceptions.rethrow(e);
-            }
-
-            if (!errorEvent.isCancelled()) {
-                respond(request, new HTTPResponse(HTTPStatus.NOT_FOUND, MIMEType.TEXT, responseHeaders,
-                        "Not Found"), connection);
-            }
+            respond(request, new HTTPResponse(HTTPStatus.NOT_FOUND, MIMEType.TEXT, responseHeaders,
+                    "Not Found"), connection);
 
             return;
         }
@@ -99,8 +68,7 @@ public class HTTP1 implements IProtocol {
         try {
             result = this.service.execute(request.getMethod(), request.getPath(), data);
         } catch (Exception e) {
-            this.exceptionManager.toss(new HTTPProtocolException(this, connection, request, e), new Object() {}
-                    .getClass().getEnclosingMethod());
+            this.exceptionManager.toss(new HTTPProtocolException(this, connection, request, e), enclosing);
             return;
         }
 

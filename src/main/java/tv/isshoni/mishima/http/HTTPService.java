@@ -4,6 +4,7 @@ import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
+import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.http.protocol.IProtocol;
@@ -104,7 +105,28 @@ public class HTTPService {
         }
 
         String httpVersion = versionTokens[1];
-        HTTPRequest request = new HTTPRequest(method, tokens[1], httpVersion);
+        String path = tokens[1]; // TODO: Apply basic URL regex checks
+        Map<String, String> queryParameters = new HashMap<>();
+
+        if (path.contains("?")) {
+            int endPath = path.lastIndexOf("?");
+            String queryParams = path.substring(endPath + 1);
+            String[] serializedEntries = queryParams.split("&");
+
+            Streams.to(serializedEntries).forEach(e -> {
+                String[] t = e.split("=");
+
+                if (t.length != 2) {
+                    throw new HTTPFormatException("Malformed query parameter!");
+                }
+
+                queryParameters.put(t[0], t[1]);
+            });
+
+            path = path.substring(0, path.lastIndexOf("?"));
+        }
+
+        HTTPRequest request = new HTTPRequest(method, path, httpVersion, queryParameters);
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
         logger.debug("Attempting handoff to protocol...");
