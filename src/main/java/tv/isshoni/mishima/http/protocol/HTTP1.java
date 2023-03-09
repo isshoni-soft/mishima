@@ -6,11 +6,12 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.Protocol;
 import tv.isshoni.mishima.annotation.processor.http.parameter.QueryParameterProcessor;
 import tv.isshoni.mishima.event.HTTPErrorEvent;
-import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
+import tv.isshoni.mishima.exception.HTTPProtocolException;
 import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.mishima.http.HTTPErrorType;
 import tv.isshoni.mishima.http.HTTPHandler;
 import tv.isshoni.mishima.http.HTTPHeaders;
+import tv.isshoni.mishima.http.HTTPProtocolExceptionHandler;
 import tv.isshoni.mishima.http.HTTPRequest;
 import tv.isshoni.mishima.http.HTTPResponse;
 import tv.isshoni.mishima.http.HTTPService;
@@ -19,7 +20,9 @@ import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.exception.ExceptionHandler;
 import tv.isshoni.winry.api.context.IEventBus;
+import tv.isshoni.winry.api.context.IExceptionManager;
 import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.service.ObjectFactory;
 import tv.isshoni.winry.api.service.VersionService;
@@ -41,7 +44,10 @@ public class HTTP1 implements IProtocol {
 
     @Inject private ObjectFactory objectFactory;
 
+    @Inject private IExceptionManager exceptionManager;
+
     @Override
+    @ExceptionHandler(HTTPProtocolExceptionHandler.class)
     public void handleConnection(HTTPRequest request, HTTPConnection connection) {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
@@ -88,16 +94,17 @@ public class HTTP1 implements IProtocol {
 
         logger.info(request.toString());
 
-        Object result = null;
+        Object result;
         HTTPResponse response = null;
         try {
             result = this.service.execute(request.getMethod(), request.getPath(), data);
-        } catch (MissingRequiredParameterException e) {
-            response = new HTTPResponse(HTTPStatus.BAD_REQUEST, MIMEType.TEXT,
-                    this.objectFactory.construct(HTTPHeaders.class), "Missing parameter: " + e.getParameter());
+        } catch (Exception e) {
+            this.exceptionManager.toss(new HTTPProtocolException(this, connection, request, e), new Object() {}
+                    .getClass().getEnclosingMethod());
+            return;
         }
 
-        if (response != null || HTTPResponse.class.isAssignableFrom(result.getClass())) {
+        if (HTTPResponse.class.isAssignableFrom(result.getClass())) {
             response = (HTTPResponse) result;
         }
 

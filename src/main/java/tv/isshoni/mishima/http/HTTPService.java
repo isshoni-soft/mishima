@@ -5,7 +5,7 @@ import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.ConnectionEvent;
-import tv.isshoni.mishima.exception.HTTPProtocolException;
+import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.http.protocol.IProtocol;
 import tv.isshoni.mishima.http.protocol.ProtocolService;
 import tv.isshoni.winry.api.annotation.Event;
@@ -87,20 +87,20 @@ public class HTTPService {
         String[] tokens = line.split(" ");
 
         if (tokens.length != 3) {
-            throw new HTTPProtocolException("malformed first line");
+            throw new HTTPFormatException("malformed first line");
         }
 
         HTTPMethod method;
         try {
             method = HTTPMethod.valueOf(tokens[0].toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new HTTPProtocolException(tokens[0] + " is not a parsable HTTP method");
+            throw new HTTPFormatException(tokens[0] + " is not a parsable HTTP method");
         }
 
         String[] versionTokens = tokens[2].split("/");
 
         if (versionTokens.length != 2) {
-            throw new HTTPProtocolException(tokens[2] + " is not a parsable HTTP version!");
+            throw new HTTPFormatException(tokens[2] + " is not a parsable HTTP version!");
         }
 
         String httpVersion = versionTokens[1];
@@ -111,7 +111,7 @@ public class HTTPService {
         if (protocolOptional.isPresent()) {
             protocolOptional.get().handleConnection(request, connection);
         } else {
-            throw new HTTPProtocolException(tokens[2] + " is not a supported HTTP version!");
+            throw new HTTPFormatException(tokens[2] + " is not a supported HTTP version!");
         }
     }
 }

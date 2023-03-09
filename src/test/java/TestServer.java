@@ -2,17 +2,13 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
+import tv.isshoni.mishima.annotation.http.parameter.QueryParameter;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
-import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.HTTPStatus;
-import tv.isshoni.mishima.http.SerializedHTTPResponse;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
-import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
 import tv.isshoni.winry.api.annotation.Logger;
-import tv.isshoni.winry.api.service.ObjectFactory;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
@@ -32,8 +28,8 @@ public class TestServer {
         return "Hello, World!";
     }
 
-    @GET("/test")
-    public HTTPResponse test(@Inject ObjectFactory factory) {
-        return factory.construct(SerializedHTTPResponse.class, HTTPStatus.OK, "Serialized Content!");
+    @GET("/login")
+    public String login(@QueryParameter("user") String user) {
+        return "Hello " + user + "!";
     }
 }
