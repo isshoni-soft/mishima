@@ -1,7 +1,14 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
 import tv.isshoni.mishima.Mishima;
+import tv.isshoni.mishima.annotation.http.method.CONNECT;
+import tv.isshoni.mishima.annotation.http.method.DELETE;
 import tv.isshoni.mishima.annotation.http.method.GET;
+import tv.isshoni.mishima.annotation.http.method.HEAD;
+import tv.isshoni.mishima.annotation.http.method.OPTIONS;
+import tv.isshoni.mishima.annotation.http.method.POST;
+import tv.isshoni.mishima.annotation.http.method.PUT;
+import tv.isshoni.mishima.annotation.http.method.TRACE;
 import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPService;
 import tv.isshoni.mishima.http.MIMEType;
@@ -17,6 +24,13 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     private static final List<Class<? extends Annotation>> INCOMPATIBLE = new LinkedList<>() {{
         add(GET.class);
+        add(CONNECT.class);
+        add(DELETE.class);
+        add(HEAD.class);
+        add(OPTIONS.class);
+        add(POST.class);
+        add(PUT.class);
+        add(TRACE.class);
     }};
 
     protected final List<Class<? extends Annotation>> incompatible;
