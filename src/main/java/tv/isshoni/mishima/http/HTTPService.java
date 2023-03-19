@@ -3,8 +3,10 @@ package tv.isshoni.mishima.http;
 import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
+import tv.isshoni.araragi.data.collection.map.token.TokenMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
+import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.http.protocol.IProtocol;
@@ -32,15 +34,19 @@ public class HTTPService {
 
     private final IWinryContext context;
 
-    private final SubMap<HTTPMethod, String, HTTPHandler, HashMap<String, HTTPHandler>> handlerMap;
+    private final SubMap<HTTPMethod, String, HTTPHandler, TokenMap<HTTPHandler>> handlerMap;
 
     private final Map<Class<?>, IHTTPSerializer<?>> serializers;
+
+    public static StringFormatter makeNewFormatter() {
+        return new StringFormatter("{", "}");
+    }
 
     public HTTPService(@Context IWinryContext context) {
         this.context = context;
         this.logger = this.context.createLogger("HTTPService");
         this.serializers = new TypeMap<>();
-        this.handlerMap = new SubMap<>(HashMap::new);
+        this.handlerMap = new SubMap<>(() -> new TokenMap<>(makeNewFormatter()));
 
         registerHTTPSerializer(String.class, s -> s);
     }
@@ -48,6 +54,10 @@ public class HTTPService {
     public void registerHTTPHandler(HTTPMethod httpMethod, MIMEType mimeType, Object object, IAnnotatedMethod method, String path) {
         if (this.handlerMap.containsKey(httpMethod, path)) {
             throw new IllegalStateException("cannot register duplicate path: " + path + " for method: " + httpMethod);
+        }
+
+        if (!path.endsWith("/")) {
+            path = path + "/";
         }
 
         this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, mimeType, method, object)));
@@ -76,6 +86,10 @@ public class HTTPService {
 
     public <R> R execute(HTTPMethod method, String path, Map<String, Object> data) {
         return getHandler(method, path).execute(data);
+    }
+
+    public TokenMap<HTTPHandler> getTokenMapForMethod(HTTPMethod method) {
+        return this.handlerMap.getOrDefault(method);
     }
 
     @Listener(ConnectionEvent.class)
@@ -126,7 +140,17 @@ public class HTTPService {
             path = path.substring(0, path.lastIndexOf("?"));
         }
 
-        HTTPRequest request = new HTTPRequest(method, path, httpVersion, queryParameters);
+        if (!path.endsWith("/")) {
+            path = path + "/";
+        }
+
+        Map<String, String> pathParams = new HashMap<>();
+        if (this.hasHandler(method, path)) {
+            this.handlerMap.get(method).getTokenized(path).getSecond().forEach(t ->
+                    pathParams.put(t.getKey(), t.getReplacement()));
+        }
+
+        HTTPRequest request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams);
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
         logger.debug("Attempting handoff to protocol...");

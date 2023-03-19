@@ -2,6 +2,7 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
+import tv.isshoni.mishima.annotation.http.parameter.PathParameter;
 import tv.isshoni.mishima.annotation.http.parameter.QueryParameter;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.winry.api.annotation.Bootstrap;
@@ -31,5 +32,15 @@ public class TestServer {
     @GET("/login")
     public String login(@QueryParameter("user") String user) {
         return "Hello " + user + "!";
+    }
+
+    @GET("/users/{userId}")
+    public String getUser(@PathParameter("userId") String userId) {
+        return "User: " + userId;
+    }
+
+    @GET("/{other}/user")
+    public String getOtherUser() {
+        return "Other user!";
     }
 }

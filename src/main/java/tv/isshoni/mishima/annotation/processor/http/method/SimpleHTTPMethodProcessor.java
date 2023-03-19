@@ -1,5 +1,8 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
+import tv.isshoni.araragi.stream.Streams;
+import tv.isshoni.araragi.string.format.StringFormatter;
+import tv.isshoni.araragi.string.format.StringToken;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.CONNECT;
 import tv.isshoni.mishima.annotation.http.method.DELETE;
@@ -17,20 +20,22 @@ import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 import java.lang.annotation.Annotation;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements IWinryAnnotationProcessor<A> {
 
-    private static final List<Class<? extends Annotation>> INCOMPATIBLE = new LinkedList<>() {{
-        add(GET.class);
-        add(CONNECT.class);
-        add(DELETE.class);
-        add(HEAD.class);
-        add(OPTIONS.class);
-        add(POST.class);
-        add(PUT.class);
-        add(TRACE.class);
+    private static final Map<Class<? extends Annotation>, HTTPMethod> ANNOTATION_TO_METHOD = new HashMap<>() {{
+        put(GET.class, HTTPMethod.GET);
+        put(CONNECT.class, HTTPMethod.CONNECT);
+        put(DELETE.class, HTTPMethod.DELETE);
+        put(HEAD.class, HTTPMethod.HEAD);
+        put(OPTIONS.class, HTTPMethod.OPTIONS);
+        put(POST.class, HTTPMethod.POST);
+        put(PUT.class, HTTPMethod.PUT);
+        put(TRACE.class, HTTPMethod.TRACE);
     }};
 
     protected final List<Class<? extends Annotation>> incompatible;
@@ -39,10 +44,13 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     protected final HTTPService service;
 
+    protected final Class<A> clazz;
+
     public SimpleHTTPMethodProcessor(HTTPService service, IWinryContext context, Class<A> clazz) {
         this.service = service;
         this.context = context;
-        this.incompatible = INCOMPATIBLE.stream().filter(c -> !c.equals(clazz)).toList();
+        this.clazz = clazz;
+        this.incompatible = ANNOTATION_TO_METHOD.keySet().stream().filter(c -> !c.equals(clazz)).toList();
     }
 
     protected RuntimeException validate(IAnnotatedMethod method, Object target, A annotation) {
@@ -58,8 +66,14 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
     @Override
     public void executeMethod(IAnnotatedMethod method, Object target, A annotation) {
         String path = getPath(annotation);
+        StringFormatter formatter = HTTPService.makeNewFormatter();
+        Streams.to(HTTPService.makeNewFormatter().tokenize(path))
+                .mapToPair(StringToken::getKey, t -> (Supplier<String>) () -> "placeholder")
+                .forEach(p -> formatter.registerSupplier(p.getFirst(), p.getSecond()));
 
-        if (!Mishima.PATH_LEGAL.matcher(path).matches()) {
+        String formatted = formatter.format(path);
+
+        if (!Mishima.PATH_LEGAL.matcher(formatted).matches()) {
             throw new IllegalStateException(path + " is not a valid http path");
         }
 

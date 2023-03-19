@@ -3,10 +3,10 @@ package tv.isshoni.mishima.http;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Add query parameters here and do processing when this is constructed
 public class HTTPRequest {
 
     public static final String QUERY_PARAMETER_DATA_PREFIX = "QUERY_PARAMETER_";
+    public static final String PATH_PARAMETER_DATA_PREFIX = "PATH_PARAMETER_";
 
     private final HTTPMethod method;
 
@@ -15,12 +15,14 @@ public class HTTPRequest {
     private final String httpVersion;
     private final String path;
 
-    public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps) {
+    public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps,
+                       Map<String, String> pathParams) {
         this.method = method;
         this.path = path;
         this.httpVersion = httpVersion;
         this.data = new HashMap<>() {{
             queryProps.forEach((k, v) -> put(QUERY_PARAMETER_DATA_PREFIX + k, v));
+            pathParams.forEach((k, v) -> put(PATH_PARAMETER_DATA_PREFIX + k, v));
         }};
     }
 
