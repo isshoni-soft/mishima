@@ -16,17 +16,17 @@ repositories {
 dependencies {
     compileOnly "javax.xml.bind:jaxb-api:$jaxb_version"
 
-    api "tv.isshoni.araragi:core:$araragi_version"
-    api "tv.isshoni.araragi:annotation:$araragi_version"
-    api "tv.isshoni.araragi:logging:$araragi_version"
+//    api "tv.isshoni.araragi:core:$araragi_version"
+//    api "tv.isshoni.araragi:annotation:$araragi_version"
+//    api "tv.isshoni.araragi:logging:$araragi_version"
 
-    api("tv.isshoni:winry:$winry_version") {
-        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
-        exclude (group: 'tv.isshoni.araragi', module: 'core')
-        exclude (group: 'tv.isshoni.araragi', module: 'logging')
-    }
+//    api("tv.isshoni:winry:$winry_version") {
+//        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
+//        exclude (group: 'tv.isshoni.araragi', module: 'core')
+//        exclude (group: 'tv.isshoni.araragi', module: 'logging')
+//    }
 
-//    api "tv.isshoni:winry:$winry_version"
+    api "tv.isshoni:winry:$winry_version"
     api 'com.google.code.gson:gson:2.10.1'
 
     testImplementation "junit:junit:$junit_version"
@@ -37,5 +37,21 @@ processResources {
         expand(
                 'version': project.version,
         )
+    }
+}
+
+publishing {
+    repositories {
+        isshoni()
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+            version = "${project.version}"
+
+            from components.java
+        }
     }
 }
