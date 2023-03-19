@@ -1,3 +1,4 @@
+import com.google.gson.JsonObject;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
@@ -30,8 +31,11 @@ public class TestServer {
     }
 
     @GET("/login")
-    public String login(@QueryParameter("user") String user) {
-        return "Hello " + user + "!";
+    public JsonObject login(@QueryParameter("user") String user) {
+        JsonObject object = new JsonObject();
+        object.addProperty("new_user", user);
+
+        return object;
     }
 
     @GET("/users/{userId}")

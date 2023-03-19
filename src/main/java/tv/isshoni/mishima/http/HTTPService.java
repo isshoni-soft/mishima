@@ -1,5 +1,8 @@
 package tv.isshoni.mishima.http;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
@@ -28,6 +31,8 @@ import java.util.Optional;
 @Injected
 public class HTTPService {
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
     private final AraragiLogger logger;
 
     @Inject private ProtocolService protocolService;
@@ -36,7 +41,7 @@ public class HTTPService {
 
     private final SubMap<HTTPMethod, String, HTTPHandler, TokenMap<HTTPHandler>> handlerMap;
 
-    private final Map<Class<?>, IHTTPSerializer<?>> serializers;
+    private final TypeMap<Class<?>, IHTTPSerializer<?>> serializers;
 
     public static StringFormatter makeNewFormatter() {
         return new StringFormatter("{", "}");
@@ -49,6 +54,7 @@ public class HTTPService {
         this.handlerMap = new SubMap<>(() -> new TokenMap<>(makeNewFormatter()));
 
         registerHTTPSerializer(String.class, s -> s);
+        registerHTTPSerializer(JsonElement.class, GSON::toJson);
     }
 
     public void registerHTTPHandler(HTTPMethod httpMethod, MIMEType mimeType, Object object, IAnnotatedMethod method, String path) {
