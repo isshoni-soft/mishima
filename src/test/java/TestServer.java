@@ -39,6 +39,12 @@ public class TestServer {
         return "User: " + userId;
     }
 
+    @GET("/users/{userId}/verify")
+    public String verifyUser(@PathParameter("userId") String userId,
+                             @QueryParameter(value = "token", optional = true) String token) {
+        return "Verified user: " + userId + " with token: " + token;
+    }
+
     @GET("/{other}/user")
     public String getOtherUser() {
         return "Other user!";

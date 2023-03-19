@@ -16,15 +16,17 @@ repositories {
 dependencies {
     compileOnly "javax.xml.bind:jaxb-api:$jaxb_version"
 
-    api "tv.isshoni.araragi:core:$araragi_version"
-    api "tv.isshoni.araragi:annotation:$araragi_version"
-    api "tv.isshoni.araragi:logging:$araragi_version"
+//    api "tv.isshoni.araragi:core:$araragi_version"
+//    api "tv.isshoni.araragi:annotation:$araragi_version"
+//    api "tv.isshoni.araragi:logging:$araragi_version"
 
-    api("tv.isshoni:winry:$winry_version") {
-        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
-        exclude (group: 'tv.isshoni.araragi', module: 'core')
-        exclude (group: 'tv.isshoni.araragi', module: 'logging')
-    }
+//    api("tv.isshoni:winry:$winry_version") {
+//        exclude (group: 'tv.isshoni.araragi', module: 'annotation')
+//        exclude (group: 'tv.isshoni.araragi', module: 'core')
+//        exclude (group: 'tv.isshoni.araragi', module: 'logging')
+//    }
+
+    api "tv.isshoni:winry:$winry_version"
 
     testImplementation "junit:junit:$junit_version"
 }
