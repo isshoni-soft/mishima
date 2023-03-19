@@ -1,5 +1,6 @@
-package tv.isshoni.mishima.http;
+package tv.isshoni.mishima.http.handler;
 
+import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 

@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.http;
+package tv.isshoni.mishima.http.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +12,11 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPFormatException;
+import tv.isshoni.mishima.http.HTTPConnection;
+import tv.isshoni.mishima.http.HTTPMethod;
+import tv.isshoni.mishima.http.HTTPRequest;
+import tv.isshoni.mishima.http.IHTTPSerializer;
+import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.mishima.http.protocol.IProtocol;
 import tv.isshoni.mishima.http.protocol.ProtocolService;
 import tv.isshoni.winry.api.annotation.Event;
@@ -31,7 +36,7 @@ import java.util.Optional;
 @Injected
 public class HTTPService {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private final AraragiLogger logger;
 

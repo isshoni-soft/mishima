@@ -49,6 +49,11 @@ public class TestServer {
         return "Verified user: " + userId + " with token: " + token;
     }
 
+    @GET("/testDTO")
+    public TestDTO testDTO(@QueryParameter("value") String value) {
+        return new TestDTO(value);
+    }
+
     @GET("/{other}/user")
     public String getOtherUser() {
         return "Other user!";

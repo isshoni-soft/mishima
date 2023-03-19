@@ -15,14 +15,14 @@ TODO List
     - [x] HTTP/1.1
     - [ ] HTTP/2
     - [ ] HTTP/3
-- [x] HTTP Server
-- [x] HTTP GET endpoints
-- [ ] HTTP POST endpoints
-- [ ] HTTP PUT endpoints
-- [ ] HTTP CONNECT endpoints
-- [ ] HTTP DELETE endpoints
-- [ ] HTTP HEAD endpoints
-- [ ] HTTP OPTIONS endpoints
-- [ ] HTTP TRACE endpoints
+- [ ] HTTP Methods
+  - [x] GET
+  - [ ] POST
+  - [ ] PUT
+  - [ ] CONNECT
+  - [ ] DELETE
+  - [ ] HEAD
+  - [ ] OPTIONS
+  - [ ] TRACE
 - [ ] CORS automation..?
 - [ ] Request body serialization

@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.mishima.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.service.ObjectFactory;
 
@@ -15,10 +16,6 @@ public class SerializedHTTPResponse extends HTTPResponse {
 
         this.service = service;
         this.body = body;
-
-        if (!this.service.hasSerializer(this.body.getClass())) {
-            throw new IllegalStateException("No serializer for type: " + this.body.getClass());
-        }
     }
 
     public SerializedHTTPResponse(@Inject HTTPService service, @Inject ObjectFactory factory, HTTPStatus code,

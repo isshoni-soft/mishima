@@ -5,12 +5,12 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.annotation.http.Protocol;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
 import tv.isshoni.mishima.http.HTTPConnection;
-import tv.isshoni.mishima.http.HTTPHandler;
+import tv.isshoni.mishima.http.handler.HTTPHandler;
 import tv.isshoni.mishima.http.HTTPHeaders;
-import tv.isshoni.mishima.http.HTTPProtocolExceptionHandler;
+import tv.isshoni.mishima.http.handler.HTTPProtocolExceptionHandler;
 import tv.isshoni.mishima.http.HTTPRequest;
 import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.HTTPService;
+import tv.isshoni.mishima.http.handler.HTTPService;
 import tv.isshoni.mishima.http.HTTPStatus;
 import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.mishima.http.MIMEType;
@@ -76,10 +76,18 @@ public class HTTP1 implements IProtocol {
             response = (HTTPResponse) result;
         }
 
-        if (response == null && this.service.hasSerializer(result.getClass())) {
+        if (response == null) {
+            IHTTPSerializer<Object> serializer = (IHTTPSerializer<Object>) this.service.getSerializer(result.getClass());
             HTTPHandler handler = this.service.getHandler(request.getMethod(), request.getPath());
-            response = new HTTPResponse(HTTPStatus.OK, handler.getMIMEType(), responseHeaders,
-                    ((IHTTPSerializer<Object>) this.service.getSerializer(result.getClass())).serialize(result));
+
+            String body;
+            if (serializer != null) {
+                body = serializer.serialize(result);
+            } else {
+                body = HTTPService.GSON.toJson(result);
+            }
+
+            response = new HTTPResponse(HTTPStatus.OK, handler.getMIMEType(), responseHeaders, body);
         }
 
         respond(request, response, connection);

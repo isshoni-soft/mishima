@@ -13,7 +13,7 @@ import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.method.PUT;
 import tv.isshoni.mishima.annotation.http.method.TRACE;
 import tv.isshoni.mishima.http.HTTPMethod;
-import tv.isshoni.mishima.http.HTTPService;
+import tv.isshoni.mishima.http.handler.HTTPService;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;

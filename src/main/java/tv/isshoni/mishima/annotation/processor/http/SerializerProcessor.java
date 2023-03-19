@@ -2,7 +2,7 @@ package tv.isshoni.mishima.annotation.processor.http;
 
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.mishima.annotation.http.HTTPSerializer;
-import tv.isshoni.mishima.http.HTTPService;
+import tv.isshoni.mishima.http.handler.HTTPService;
 import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
