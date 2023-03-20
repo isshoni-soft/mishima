@@ -8,8 +8,8 @@ public class MissingRequiredParameterException extends RuntimeException {
 
     private final String parameter;
 
-    public MissingRequiredParameterException(String parameter) {
-        super("missing required query parameter: " + parameter);
+    public MissingRequiredParameterException(String parameter, String type) {
+        super("missing required " + type + " parameter: " + parameter);
 
         this.parameter = parameter;
     }

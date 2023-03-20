@@ -57,7 +57,9 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
         return null;
     }
 
-    public abstract HTTPMethod getHTTPMethod();
+    public HTTPMethod getHTTPMethod() {
+        return ANNOTATION_TO_METHOD.get(this.clazz);
+    }
 
     public abstract String getPath(A annotation);
 

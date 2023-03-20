@@ -7,8 +7,12 @@ public class HTTPRequest {
 
     public static final String QUERY_PARAMETER_DATA_PREFIX = "QUERY_PARAMETER_";
     public static final String PATH_PARAMETER_DATA_PREFIX = "PATH_PARAMETER_";
+    public static final String HEADER_PARAMETER_DATA_PREFIX = "HEADER_PARAMETER_";
+    public static final String BODY_PARAMETER_KEY = "BODY_PARAMETER";
 
     private final HTTPMethod method;
+
+    private final HTTPHeaders headers;
 
     private final Map<String, String> data;
 
@@ -16,14 +20,29 @@ public class HTTPRequest {
     private final String path;
 
     public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps,
-                       Map<String, String> pathParams) {
+                       Map<String, String> pathParams, HTTPHeaders headers, String body) {
         this.method = method;
+        this.headers = headers;
         this.path = path;
         this.httpVersion = httpVersion;
         this.data = new HashMap<>() {{
             queryProps.forEach((k, v) -> put(QUERY_PARAMETER_DATA_PREFIX + k, v));
             pathParams.forEach((k, v) -> put(PATH_PARAMETER_DATA_PREFIX + k, v));
+            headers.forEach((k, v) -> put(HEADER_PARAMETER_DATA_PREFIX + k, v));
+
+            if (body != null) {
+                put(BODY_PARAMETER_KEY, body);
+            }
         }};
+    }
+
+    public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps,
+                       Map<String, String> pathParams, HTTPHeaders headers) {
+        this(method, path, httpVersion, queryProps, pathParams, headers, null);
+    }
+
+    public HTTPHeaders getHeaders() {
+        return this.headers;
     }
 
     public Map<String, String> getData() {

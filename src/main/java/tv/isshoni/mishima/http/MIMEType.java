@@ -2,7 +2,8 @@ package tv.isshoni.mishima.http;
 
 public enum MIMEType {
     TEXT("text/plain"),
-    JPG("image/jpg");
+    JPG("image/jpg"),
+    JSON("application/json");
 
     private final String serialized;
 

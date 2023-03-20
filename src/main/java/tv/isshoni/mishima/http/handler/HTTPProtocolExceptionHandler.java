@@ -4,7 +4,9 @@ import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.annotation.exception.StatusCode;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
+import tv.isshoni.mishima.exception.parameter.MissingBodyException;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
+import tv.isshoni.mishima.exception.parameter.NeedsContentTypeException;
 import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.mishima.http.HTTPHeaders;
 import tv.isshoni.mishima.http.HTTPRequest;
@@ -31,12 +33,21 @@ public class HTTPProtocolExceptionHandler implements IExceptionHandler<HTTPProto
         HTTPRequest request = exception.getRequest();
         HTTPConnection connection = exception.getConnection();
         IProtocol protocol = exception.getProtocol();
-
         HTTPResponse response = null;
+        HTTPStatus status = getStatusFromException(e);
+
         if (e instanceof MissingRequiredParameterException cast) {
-            response = new HTTPResponse(getStatusFromException(cast), MIMEType.TEXT,
+            response = new HTTPResponse(status, MIMEType.TEXT,
                     this.objectFactory.construct(HTTPHeaders.class),
                     "Missing required parameter: " + cast.getParameter());
+        } else if (e instanceof MissingBodyException) {
+            response = new HTTPResponse(status, MIMEType.TEXT,
+                    this.objectFactory.construct(HTTPHeaders.class),
+                    "Missing request body!");
+        } else if (e instanceof NeedsContentTypeException cast) {
+            response = new HTTPResponse(status, MIMEType.TEXT,
+                    this.objectFactory.construct(HTTPHeaders.class),
+                    "Request requires Content-Type: " + cast.getMimeType().getSerialized());
         }
 
         if (response == null) {

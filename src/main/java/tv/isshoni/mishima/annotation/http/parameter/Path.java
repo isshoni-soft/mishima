@@ -2,7 +2,7 @@ package tv.isshoni.mishima.annotation.http.parameter;
 
 import tv.isshoni.araragi.annotation.Processor;
 import tv.isshoni.araragi.annotation.Weight;
-import tv.isshoni.mishima.annotation.processor.http.parameter.QueryParameterProcessor;
+import tv.isshoni.mishima.annotation.processor.http.parameter.PathProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,10 +12,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 @Weight(5)
-@Processor(QueryParameterProcessor.class)
-public @interface QueryParameter {
+@Processor(PathProcessor.class)
+public @interface Path {
 
     String value();
-
-    boolean optional() default false;
 }

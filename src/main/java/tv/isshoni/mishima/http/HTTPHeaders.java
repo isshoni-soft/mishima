@@ -17,8 +17,12 @@ public class HTTPHeaders {
 
     private final Map<String, String> headers;
 
-    public HTTPHeaders(@Inject VersionService versionService) {
+    public HTTPHeaders() {
         this.headers = new HashMap<>();
+    }
+
+    public HTTPHeaders(@Inject VersionService versionService) {
+        this();
 
         addHeader(DATE, new Date().toString());
         addHeader(SERVER, "Mishima/v" + versionService.getVersion("mishima").get());

@@ -3,9 +3,12 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
-import tv.isshoni.mishima.annotation.http.parameter.PathParameter;
-import tv.isshoni.mishima.annotation.http.parameter.QueryParameter;
+import tv.isshoni.mishima.annotation.http.method.POST;
+import tv.isshoni.mishima.annotation.http.parameter.Body;
+import tv.isshoni.mishima.annotation.http.parameter.Path;
+import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
+import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -31,26 +34,34 @@ public class TestServer {
     }
 
     @GET("/login")
-    public JsonObject login(@QueryParameter("user") String user) {
+    public JsonObject login(@Query("user") String user) {
         JsonObject object = new JsonObject();
         object.addProperty("new_user", user);
 
         return object;
     }
 
+    @POST(value = "/users/create")
+    public JsonObject create(@Body(MIMEType.JSON) TestDTO dto) {
+        JsonObject object = new JsonObject();
+        object.addProperty("value", dto.getValue());
+
+        return object;
+    }
+
     @GET("/users/{userId}")
-    public String getUser(@PathParameter("userId") String userId) {
+    public String getUser(@Path("userId") String userId) {
         return "User: " + userId;
     }
 
     @GET("/users/{userId}/verify")
-    public String verifyUser(@PathParameter("userId") String userId,
-                             @QueryParameter(value = "token", optional = true) String token) {
+    public String verifyUser(@Path("userId") String userId,
+                             @Query(value = "token", optional = true) String token) {
         return "Verified user: " + userId + " with token: " + token;
     }
 
     @GET("/testDTO")
-    public TestDTO testDTO(@QueryParameter("value") String value) {
+    public TestDTO testDTO(@Query("value") String value) {
         return new TestDTO(value);
     }
 

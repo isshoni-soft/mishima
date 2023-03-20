@@ -50,6 +50,8 @@ public class HTTP1 implements IProtocol {
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
 
         Map<String, Object> data = new HashMap<>(request.getData());
+        data.put("request", request);
+
         String path = request.getPath();
         HTTPHeaders responseHeaders = this.objectFactory.construct(HTTPHeaders.class);
 

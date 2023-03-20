@@ -37,10 +37,16 @@ public class HTTPConnection implements Closeable {
 
     public String readLine() {
         try {
-            return this.clientReader.readLine();
+            String line = this.clientReader.readLine();
+            logger.debug("<- " + line);
+            return line;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean hasLine() throws IOException {
+        return this.clientReader.ready();
     }
 
     @Override

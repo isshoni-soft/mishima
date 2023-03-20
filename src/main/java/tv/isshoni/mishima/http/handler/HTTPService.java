@@ -13,8 +13,10 @@ import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.http.HTTPConnection;
+import tv.isshoni.mishima.http.HTTPHeaders;
 import tv.isshoni.mishima.http.HTTPMethod;
 import tv.isshoni.mishima.http.HTTPRequest;
+import tv.isshoni.mishima.http.IHTTPDeserializer;
 import tv.isshoni.mishima.http.IHTTPSerializer;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.mishima.http.protocol.IProtocol;
@@ -27,6 +29,7 @@ import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.transformer.Async;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
+import tv.isshoni.winry.api.service.ObjectFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,6 +51,8 @@ public class HTTPService {
 
     private final TypeMap<Class<?>, IHTTPSerializer<?>> serializers;
 
+    private final TypeMap<Class<?>, IHTTPDeserializer<?>> deserializers;
+
     public static StringFormatter makeNewFormatter() {
         return new StringFormatter("{", "}");
     }
@@ -56,6 +61,7 @@ public class HTTPService {
         this.context = context;
         this.logger = this.context.createLogger("HTTPService");
         this.serializers = new TypeMap<>();
+        this.deserializers = new TypeMap<>();
         this.handlerMap = new SubMap<>(() -> new TokenMap<>(makeNewFormatter()));
 
         registerHTTPSerializer(String.class, s -> s);
@@ -87,6 +93,18 @@ public class HTTPService {
         this.serializers.put(type, serializer);
     }
 
+    public boolean hasDeserializer(Class<?> type) {
+        return this.deserializers.containsKey(type);
+    }
+
+    public <O> IHTTPDeserializer<O> getDeserializer(Class<O> type) {
+        return (IHTTPDeserializer<O>) this.deserializers.get(type);
+    }
+
+    public <O> void registerHTTPDeserializer(Class<O> type, IHTTPDeserializer<O> deserializer) {
+        this.deserializers.put(type, deserializer);
+    }
+
     public boolean hasHandler(HTTPMethod method, String path) {
         return this.handlerMap.containsKey(method, path);
     }
@@ -105,7 +123,7 @@ public class HTTPService {
 
     @Listener(ConnectionEvent.class)
     @Async
-    public void handleNewConnection(@Event ConnectionEvent event) throws IOException {
+    public void handleNewConnection(@Event ConnectionEvent event, @Inject ObjectFactory factory) throws IOException {
         HTTPConnection connection = event.getConnection();
 
         // PROCESS FIRST LINE
@@ -121,6 +139,23 @@ public class HTTPService {
             method = HTTPMethod.valueOf(tokens[0].toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new HTTPFormatException(tokens[0] + " is not a parsable HTTP method");
+        }
+
+        HTTPHeaders requestHeaders = new HTTPHeaders();
+        StringBuilder body = new StringBuilder();
+        boolean isBody = false;
+
+        while (connection.hasLine()) {
+            String dataLine = connection.readLine();
+
+            if (dataLine.contains(":") && !isBody) {
+                String[] headerTokens = dataLine.split(": ");
+
+                requestHeaders.addHeader(headerTokens[0], headerTokens[1]);
+            } else if (method.hasBody()) {
+                isBody = true;
+                body.append(dataLine).append("\n");
+            }
         }
 
         String[] versionTokens = tokens[2].split("/");
@@ -161,7 +196,13 @@ public class HTTPService {
                     pathParams.put(t.getKey(), t.getReplacement()));
         }
 
-        HTTPRequest request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams);
+        HTTPRequest request;
+        if (body.length() > 0) {
+            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
+                    body.toString().trim());
+        } else {
+            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders);
+        }
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
         logger.debug("Attempting handoff to protocol...");
