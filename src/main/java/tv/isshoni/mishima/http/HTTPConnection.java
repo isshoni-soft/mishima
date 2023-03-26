@@ -45,6 +45,18 @@ public class HTTPConnection implements Closeable {
         }
     }
 
+    public String read(int length) {
+        try {
+            char[] buffer = new char[length];
+            this.clientReader.read(buffer);
+            String line = new String(buffer);
+            logger.debug("<- " + line);
+            return line;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean hasLine() throws IOException {
         return this.clientReader.ready();
     }

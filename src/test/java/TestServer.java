@@ -42,9 +42,10 @@ public class TestServer {
     }
 
     @POST(value = "/users/create")
-    public JsonObject create(@Body(MIMEType.JSON) TestDTO dto) {
+    public JsonObject create(@Body(MIMEType.JSON) CreateUserDTO dto) {
         JsonObject object = new JsonObject();
-        object.addProperty("value", dto.getValue());
+        object.addProperty("status", "successfully created");
+        object.addProperty("user", dto.getUsername());
 
         return object;
     }

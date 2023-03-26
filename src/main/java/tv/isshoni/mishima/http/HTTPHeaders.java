@@ -13,7 +13,8 @@ public class HTTPHeaders {
 
     public static final String DATE = "Date";
     public static final String SERVER = "Server";
-    public static final String CONTENT_TYPE = "Content-type";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_LENGTH = "Content-Length";
 
     private final Map<String, String> headers;
 
@@ -26,6 +27,10 @@ public class HTTPHeaders {
 
         addHeader(DATE, new Date().toString());
         addHeader(SERVER, "Mishima/v" + versionService.getVersion("mishima").get());
+    }
+
+    public boolean hasHeader(String header) {
+        return this.headers.containsKey(header);
     }
 
     public void forEach(BiConsumer<String, String> consumer) {

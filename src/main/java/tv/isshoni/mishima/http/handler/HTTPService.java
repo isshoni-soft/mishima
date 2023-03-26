@@ -142,21 +142,27 @@ public class HTTPService {
         }
 
         HTTPHeaders requestHeaders = new HTTPHeaders();
-        StringBuilder body = new StringBuilder();
-        boolean isBody = false;
 
-        while (connection.hasLine()) {
-            String dataLine = connection.readLine();
+        // read until body separator
+        String dataLine;
+        do {
+            dataLine = connection.readLine();
 
-            if (dataLine.contains(":") && !isBody) {
+            if (dataLine.contains(":")) {
                 String[] headerTokens = dataLine.split(": ");
 
                 requestHeaders.addHeader(headerTokens[0], headerTokens[1]);
-            } else if (method.hasBody()) {
-                isBody = true;
-                body.append(dataLine).append("\n");
             }
+        } while (dataLine.length() != 0);
+
+        String body = "";
+        if (requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
+            int contentLength = Integer.parseInt(requestHeaders.getHeader(HTTPHeaders.CONTENT_LENGTH));
+
+            body = connection.read(contentLength);
         }
+
+        this.logger.info("HAS LINE: " + connection.hasLine());
 
         String[] versionTokens = tokens[2].split("/");
 
@@ -199,7 +205,7 @@ public class HTTPService {
         HTTPRequest request;
         if (body.length() > 0) {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    body.toString().trim());
+                    body.trim());
         } else {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders);
         }
