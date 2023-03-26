@@ -17,12 +17,13 @@ TODO List
     - [ ] HTTP/3
 - [ ] HTTP Methods
   - [x] GET
-  - [ ] POST
+  - [x] POST
   - [ ] PUT
   - [ ] CONNECT
   - [ ] DELETE
   - [ ] HEAD
   - [ ] OPTIONS
   - [ ] TRACE
+- [ ] HTTPS functionality
 - [ ] CORS automation..?
-- [ ] Request body serialization
+- [x] Request body serialization
