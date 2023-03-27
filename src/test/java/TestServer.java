@@ -25,7 +25,7 @@ public class TestServer {
 
     @Listener(MishimaConfigEvent.class)
     public void configureMishima(@Event MishimaConfigEvent event) {
-        event.port(8080);
+        event.useTLS().port(8080);
     }
 
     @GET("/")

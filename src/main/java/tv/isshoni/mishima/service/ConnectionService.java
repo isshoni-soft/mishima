@@ -10,9 +10,11 @@ import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryShutdownEvent;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 
 @Injected
 public class ConnectionService {
@@ -25,14 +27,21 @@ public class ConnectionService {
 
     private ServerSocket socket;
 
-    public void init(MishimaConfigEvent event) {
+    public void init(final MishimaConfigEvent event) {
         if (!event.isValid()) {
             throw new IllegalArgumentException("MishimaConfigEvent does ");
         }
 
         this.thread = new Thread(() -> {
             try {
-                this.socket = new ServerSocket(event.getPort());
+                if (event.isTLS()) {
+                    SSLContext sslContext = SSLContext.getInstance("TLS");
+//                    sslContext.init();
+
+//                    this.socket =
+                } else {
+                    this.socket = new ServerSocket(event.getPort());
+                }
                 logger.info("Listening for connections on port: " + event.getPort());
 
                 while (!this.socket.isClosed()) {
@@ -46,7 +55,7 @@ public class ConnectionService {
                         this.context.getExceptionManager().recover(e);
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | NoSuchAlgorithmException e) {
                 this.context.getExceptionManager().toss(e);
             }
         }, "ConnectionService");

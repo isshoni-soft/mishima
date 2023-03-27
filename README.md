@@ -4,7 +4,18 @@ Using Winry, Mishima is a spring-like java webserver host.
 
 Usage
 -----
-Mishima will be available on the isshoni repo on version `v0.1.0`.
+I have a maven repository where I publish builds, here is how you would import it as a dependency with gradle:
+```groovy
+repositories {
+    maven {
+        url = 'https://repo.isshoni.institute'
+    }
+}
+
+dependencies {
+    implementation 'tv.isshoni:mishima:0.2.0'
+}
+```
 
 TODO List
 ---------

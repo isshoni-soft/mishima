@@ -7,9 +7,17 @@ public class MishimaConfigEvent {
 
     private int port;
 
+    private boolean tls;
+
     public MishimaConfigEvent() {
         this.port = -1;
+        this.tls = false;
+    }
 
+    public MishimaConfigEvent useTLS() {
+        this.tls = true;
+
+        return this;
     }
 
     public MishimaConfigEvent port(int port) {
@@ -20,6 +28,10 @@ public class MishimaConfigEvent {
         this.port = port;
 
         return this;
+    }
+
+    public boolean isTLS() {
+        return this.tls;
     }
 
     public int getPort() {
