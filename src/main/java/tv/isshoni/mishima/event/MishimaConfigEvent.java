@@ -48,7 +48,7 @@ public class MishimaConfigEvent {
     }
 
     public boolean isValid() {
-        if (isTLS() && (this.keystorePassword == null || this.keystorePassword.length() < 6)) {
+        if (isTLS() && this.keystorePassword == null) {
             return false;
         }
 

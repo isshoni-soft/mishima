@@ -11,6 +11,20 @@ import java.util.function.BiConsumer;
 
 public class HTTPHeaders {
 
+    public static final String KEEP_ALIVE = "Keep-Alive";
+    public static final String VARY = "Vary";
+    public static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
+    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    public static final String ACCESS_CONTROL_REQUEST_HEADERS = "Access-Control-Request-Headers";
+    public static final String ACCESS_CONTROL_REQUEST_METHOD = "Access-Control-Request-Method";
+    public static final String ACCEPT_ENCODING = "Accept-Encoding";
+    public static final String ACCEPT_LANGUAGE = "Accept-Language";
+    public static final String CONNECTION = "Connection";
+    public static final String ORIGIN = "Origin";
+    public static final String ACCEPT = "Accept";
+    public static final String ALLOW = "Allow";
+    public static final String CACHE_CONTROL = "Cache-Control";
+    public static final String HOST = "Host";
     public static final String DATE = "Date";
     public static final String SERVER = "Server";
     public static final String CONTENT_TYPE = "Content-Type";
