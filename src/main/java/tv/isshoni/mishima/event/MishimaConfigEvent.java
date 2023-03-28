@@ -7,15 +7,16 @@ public class MishimaConfigEvent {
 
     private int port;
 
-    private boolean tls;
+    private String keystorePath = null;
+    private String keystorePassword;
 
     public MishimaConfigEvent() {
         this.port = -1;
-        this.tls = false;
     }
 
-    public MishimaConfigEvent useTLS() {
-        this.tls = true;
+    public MishimaConfigEvent useTLS(String keystorePath, String keystorePassword) {
+        this.keystorePath = keystorePath;
+        this.keystorePassword = keystorePassword;
 
         return this;
     }
@@ -30,8 +31,16 @@ public class MishimaConfigEvent {
         return this;
     }
 
+    public String getKeystorePassword() {
+        return this.keystorePassword;
+    }
+
+    public String getKeystorePath() {
+        return this.keystorePath;
+    }
+
     public boolean isTLS() {
-        return this.tls;
+        return this.keystorePath != null && !this.keystorePath.isEmpty();
     }
 
     public int getPort() {
@@ -39,6 +48,10 @@ public class MishimaConfigEvent {
     }
 
     public boolean isValid() {
+        if (isTLS() && (this.keystorePassword == null || this.keystorePassword.length() < 6)) {
+            return false;
+        }
+
         return this.port != -1;
     }
 }

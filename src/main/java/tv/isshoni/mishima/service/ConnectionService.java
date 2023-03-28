@@ -1,6 +1,7 @@
 package tv.isshoni.mishima.service;
 
 import tv.isshoni.araragi.logging.AraragiLogger;
+import tv.isshoni.araragi.util.FileUtil;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.MishimaConfigEvent;
 import tv.isshoni.winry.api.annotation.Inject;
@@ -10,11 +11,19 @@ import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryShutdownEvent;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 @Injected
 public class ConnectionService {
@@ -29,16 +38,32 @@ public class ConnectionService {
 
     public void init(final MishimaConfigEvent event) {
         if (!event.isValid()) {
-            throw new IllegalArgumentException("MishimaConfigEvent does ");
+            throw new IllegalArgumentException("MishimaConfigEvent is not valid!");
         }
 
         this.thread = new Thread(() -> {
             try {
                 if (event.isTLS()) {
-                    SSLContext sslContext = SSLContext.getInstance("TLS");
-//                    sslContext.init();
+                    char[] password = event.getKeystorePassword().toCharArray();
 
-//                    this.socket =
+                    KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                    keyStore.load(FileUtil.getResource(event.getKeystorePath()), password);
+                    logger.info("Successfully loaded keyfile!");
+
+                    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    trustManagerFactory.init(keyStore);
+
+                    KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("NewSunX509");
+                    keyManagerFactory.init(keyStore, password);
+
+                    SSLContext sslContext = SSLContext.getInstance("TLS");
+                    sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+                    SSLServerSocketFactory socketFactory = sslContext.getServerSocketFactory();
+
+                    logger.info("Creating SSL server socket...");
+
+                    this.socket = socketFactory.createServerSocket(event.getPort());
                 } else {
                     this.socket = new ServerSocket(event.getPort());
                 }
@@ -55,7 +80,8 @@ public class ConnectionService {
                         this.context.getExceptionManager().recover(e);
                     }
                 }
-            } catch (IOException | NoSuchAlgorithmException e) {
+            } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException |
+                     UnrecoverableKeyException | KeyManagementException e) {
                 this.context.getExceptionManager().toss(e);
             }
         }, "ConnectionService");

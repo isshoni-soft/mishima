@@ -35,6 +35,6 @@ TODO List
   - [ ] HEAD
   - [ ] OPTIONS
   - [ ] TRACE
-- [ ] HTTPS functionality
+- [x] HTTPS functionality
 - [ ] CORS automation..?
 - [x] Request body serialization
