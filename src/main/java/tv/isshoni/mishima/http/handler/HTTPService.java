@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import tv.isshoni.araragi.data.Pair;
+import tv.isshoni.araragi.data.collection.map.BucketMap;
 import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
 import tv.isshoni.araragi.data.collection.map.token.TokenMap;
@@ -33,6 +34,8 @@ import tv.isshoni.winry.api.service.ObjectFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,9 +48,13 @@ public class HTTPService {
 
     @Inject private ProtocolService protocolService;
 
+    @Inject private ObjectFactory objectFactory;
+
     private final IWinryContext context;
 
     private final SubMap<HTTPMethod, String, HTTPHandler, TokenMap<HTTPHandler>> handlerMap;
+
+    private final BucketMap<String, Pair<HTTPMethod, HTTPHandler>> handlersByPath;
 
     private final TypeMap<Class<?>, IHTTPSerializer<?>> serializers;
 
@@ -63,6 +70,7 @@ public class HTTPService {
         this.serializers = new TypeMap<>();
         this.deserializers = new TypeMap<>();
         this.handlerMap = new SubMap<>(() -> new TokenMap<>(makeNewFormatter()));
+        this.handlersByPath = new BucketMap<>(new TokenMap<>());
 
         registerHTTPSerializer(String.class, s -> s);
         registerHTTPSerializer(JsonElement.class, GSON::toJson);
@@ -77,8 +85,17 @@ public class HTTPService {
             path = path + "/";
         }
 
-        this.handlerMap.put(httpMethod, Pair.of(path, new HTTPHandler(this.context, mimeType, method, object)));
-        logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
+        if (!this.handlersByPath.containsKey(path)) {
+            this.logger.info("Registering options for path: " + path);
+            HTTPHandler optionsHandler = new HTTPOptionsHandler(this.context, this, this.objectFactory);
+            this.handlerMap.put(HTTPMethod.OPTIONS, Pair.of(path, optionsHandler));
+            this.handlersByPath.add(path, Pair.of(HTTPMethod.OPTIONS, optionsHandler));
+        }
+
+        HTTPHandler handler = new HTTPHandler(this.context, mimeType, method, object);
+        this.handlerMap.put(httpMethod, Pair.of(path, handler));
+        this.handlersByPath.add(path, Pair.of(httpMethod, handler));
+        this.logger.info("Registered HTTP Handler: " + httpMethod + " " + path + " -- " + method.getDisplay());
     }
 
     public boolean hasSerializer(Class<?> type) {
@@ -113,12 +130,16 @@ public class HTTPService {
         return this.handlerMap.get(method).get(path);
     }
 
-    public <R> R execute(HTTPMethod method, String path, Map<String, Object> data) {
+    public Object execute(HTTPMethod method, String path, Map<String, Object> data) {
         return getHandler(method, path).execute(data);
     }
 
     public TokenMap<HTTPHandler> getTokenMapForMethod(HTTPMethod method) {
         return this.handlerMap.getOrDefault(method);
+    }
+
+    public List<Pair<HTTPMethod, HTTPHandler>> getHandlersForPath(String path) {
+        return new LinkedList<>(this.handlersByPath.getOrNew(path));
     }
 
     @Listener(ConnectionEvent.class)
@@ -161,8 +182,6 @@ public class HTTPService {
 
             body = connection.read(contentLength);
         }
-
-        this.logger.info("HAS LINE: " + connection.hasLine());
 
         String[] versionTokens = tokens[2].split("/");
 

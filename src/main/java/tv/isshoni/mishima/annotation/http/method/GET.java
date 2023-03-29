@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@Weight(500000000)
+@Weight(190000)
 @Processor(GETProcessor.class)
 public @interface GET {
     String value(); // path

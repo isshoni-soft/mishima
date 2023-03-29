@@ -34,6 +34,11 @@ public class TestServer {
         return "Hello, World!";
     }
 
+    @POST("/")
+    public String postIndex(@Body(MIMEType.TEXT) String body) {
+        return "Echo: " + body;
+    }
+
     @GET("/login")
     public JsonObject login(@Query("user") String user) {
         JsonObject object = new JsonObject();

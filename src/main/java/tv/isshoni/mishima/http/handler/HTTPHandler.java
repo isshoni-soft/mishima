@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class HTTPHandler {
 
-    private final IWinryContext context;
+    protected final IWinryContext context;
 
-    private final IAnnotatedMethod method;
+    protected final IAnnotatedMethod method;
 
-    private final MIMEType mimeType;
+    protected final MIMEType mimeType;
 
-    private final Object target;
+    protected final Object target;
 
     public HTTPHandler(IWinryContext context, MIMEType mimeType, IAnnotatedMethod method, Object target) {
         this.context = context;
@@ -27,7 +27,7 @@ public class HTTPHandler {
         return this.mimeType;
     }
 
-    public <R> R execute(Map<String, Object> provided) {
+    public Object execute(Map<String, Object> provided) {
         return this.context.getMetaManager().execute(this.method, this.target, provided);
     }
 

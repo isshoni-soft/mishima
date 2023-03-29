@@ -101,14 +101,19 @@ public class HTTP1 implements IProtocol {
             throw new NullPointerException("Unable to serialize response for request: " + request);
         }
 
-        response.getHeaders().addHeader(HTTPHeaders.CONTENT_TYPE, response.getMIMEType().getSerialized());
+        if (response.getMIMEType() != null) {
+            response.getHeaders().addHeader(HTTPHeaders.CONTENT_TYPE, response.getMIMEType().getSerialized());
+        }
 
         connection.write("HTTP/1.1 " + response.getCode() + " " + response.getStatus().name());
 
         response.getHeaders().forEach((header, value) -> connection.write(header + ": " + value));
 
         connection.write(""); // needs blank line between headers & content
-        connection.write(response.getBody());
+
+        if (response.getBody().length() > 0) {
+            connection.write(response.getBody());
+        }
 
         try {
             connection.close();

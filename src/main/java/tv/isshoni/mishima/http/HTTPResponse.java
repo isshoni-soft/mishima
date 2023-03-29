@@ -1,5 +1,8 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.service.ObjectFactory;
+
 public class HTTPResponse {
 
     private final HTTPStatus code;
@@ -15,6 +18,10 @@ public class HTTPResponse {
         this.mimeType = mimeType;
         this.headers = headers;
         this.body = body;
+    }
+
+    public HTTPResponse(@Inject ObjectFactory factory, HTTPStatus code, MIMEType mimeType, String body) {
+        this(code, mimeType, factory.construct(HTTPHeaders.class), body);
     }
 
     public HTTPHeaders getHeaders() {
