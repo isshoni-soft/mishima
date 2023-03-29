@@ -7,8 +7,8 @@ import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
 import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
-import tv.isshoni.mishima.event.config.MishimaConfigEvent;
-import tv.isshoni.mishima.http.HTTPHeaders;
+import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
+import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
@@ -24,12 +24,14 @@ public class TestServer {
 
     @Logger("TestServer") private AraragiLogger logger;
 
-    @Listener(MishimaConfigEvent.class)
-    public void configureMishima(@Event MishimaConfigEvent event) {
-        event.useTLS("testkey.jks", "password")
-                .corsAllowOrigin("*")
-                .corsAllowedHeaders(HTTPHeaders.CONTENT_TYPE)
-                .port(8080);
+    @Listener(MishimaServerConfigEvent.class)
+    public void configureMishima(@Event MishimaServerConfigEvent event) {
+        event.http().useTLS("testkey.jks", "password").port(8080);
+    }
+
+    @Listener(MishimaHTTPConfigEvent.class)
+    public void configureHTTP(@Event MishimaHTTPConfigEvent event) {
+        event.corsAllowOrigin("*");
     }
 
     @GET("/")

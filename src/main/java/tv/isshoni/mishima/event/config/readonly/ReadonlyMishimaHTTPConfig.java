@@ -1,17 +1,15 @@
-package tv.isshoni.mishima.event.config;
+package tv.isshoni.mishima.event.config.readonly;
+
+import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 
 import java.util.List;
 
-public class ReadonlyMishimaConfig {
+public class ReadonlyMishimaHTTPConfig {
 
-    private final MishimaConfigEvent event;
+    private final MishimaHTTPConfigEvent event;
 
-    public ReadonlyMishimaConfig(MishimaConfigEvent event) {
+    public ReadonlyMishimaHTTPConfig(MishimaHTTPConfigEvent event) {
         this.event = event;
-    }
-
-    public int getPort() {
-        return this.event.getPort();
     }
 
     public long getCORSMaxAge() {
@@ -24,10 +22,6 @@ public class ReadonlyMishimaConfig {
 
     public List<String> getCORSAllowedHeaders() {
         return this.event.getCORSAllowedHeaders();
-    }
-
-    public boolean isTLS() {
-        return this.event.isTLS();
     }
 
     public boolean isCORS() {

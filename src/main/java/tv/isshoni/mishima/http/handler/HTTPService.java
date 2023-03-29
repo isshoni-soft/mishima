@@ -12,6 +12,8 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.mishima.event.ConnectionEvent;
+import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
+import tv.isshoni.mishima.event.config.readonly.ReadonlyMishimaHTTPConfig;
 import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.http.HTTPConnection;
 import tv.isshoni.mishima.http.HTTPHeaders;
@@ -29,6 +31,7 @@ import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.transformer.Async;
 import tv.isshoni.winry.api.context.IWinryContext;
+import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 import tv.isshoni.winry.api.service.ObjectFactory;
 
@@ -60,6 +63,8 @@ public class HTTPService {
 
     private final TypeMap<Class<?>, IHTTPDeserializer<?>> deserializers;
 
+    private final MishimaHTTPConfigEvent httpConfig;
+
     public static StringFormatter makeNewFormatter() {
         return new StringFormatter("{", "}");
     }
@@ -71,6 +76,13 @@ public class HTTPService {
         this.deserializers = new TypeMap<>();
         this.handlerMap = new SubMap<>(() -> new TokenMap<>(makeNewFormatter()));
         this.handlersByPath = new BucketMap<>(new TokenMap<>());
+        this.httpConfig = new MishimaHTTPConfigEvent();
+
+        try {
+            context.getEventBus().fire(this.httpConfig);
+        } catch (EventExecutionException e) {
+            context.getExceptionManager().toss(e);
+        }
 
         registerHTTPSerializer(String.class, s -> s);
         registerHTTPSerializer(JsonElement.class, GSON::toJson);
@@ -221,13 +233,14 @@ public class HTTPService {
                     pathParams.put(t.getKey(), t.getReplacement()));
         }
 
+        ReadonlyMishimaHTTPConfig readonlyConfig = new ReadonlyMishimaHTTPConfig(this.httpConfig);
         HTTPRequest request;
         if (body.length() > 0) {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    body.trim(), event.getConfig());
+                    body.trim(), readonlyConfig);
         } else {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    event.getConfig());
+                    readonlyConfig);
         }
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 
