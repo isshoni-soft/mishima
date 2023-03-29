@@ -3,7 +3,8 @@ package tv.isshoni.mishima.service;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.util.FileUtil;
 import tv.isshoni.mishima.event.ConnectionEvent;
-import tv.isshoni.mishima.event.MishimaConfigEvent;
+import tv.isshoni.mishima.event.config.MishimaConfigEvent;
+import tv.isshoni.mishima.event.config.ReadonlyMishimaConfig;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -75,7 +76,8 @@ public class ConnectionService {
                     this.logger.debug("Accepted new connection!");
 
                     try {
-                        this.context.getEventBus().fire(new ConnectionEvent(client, this.context.getLoggerFactory()));
+                        this.context.getEventBus().fire(new ConnectionEvent(client, this.context.getLoggerFactory(),
+                                new ReadonlyMishimaConfig(event)));
                     } catch (Throwable e) {
                         this.context.getExceptionManager().recover(e);
                     }

@@ -224,9 +224,10 @@ public class HTTPService {
         HTTPRequest request;
         if (body.length() > 0) {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    body.trim());
+                    body.trim(), event.getConfig());
         } else {
-            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders);
+            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
+                    event.getConfig());
         }
         Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
 

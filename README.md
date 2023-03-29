@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'tv.isshoni:mishima:0.2.0'
+    implementation 'tv.isshoni:mishima:0.4.0'
 }
 ```
 
@@ -33,8 +33,10 @@ TODO List
   - [ ] CONNECT
   - [ ] DELETE
   - [ ] HEAD
-  - [ ] OPTIONS
+  - [x] OPTIONS
+    - [x] Automated
   - [ ] TRACE
 - [x] HTTPS functionality
-- [ ] CORS automation..?
+- [x] CORS..?
+  - [ ] Verify that more is not required for proper CORS integration.
 - [x] Request body serialization

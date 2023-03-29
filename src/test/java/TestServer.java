@@ -7,7 +7,8 @@ import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
 import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
-import tv.isshoni.mishima.event.MishimaConfigEvent;
+import tv.isshoni.mishima.event.config.MishimaConfigEvent;
+import tv.isshoni.mishima.http.HTTPHeaders;
 import tv.isshoni.mishima.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
@@ -26,6 +27,8 @@ public class TestServer {
     @Listener(MishimaConfigEvent.class)
     public void configureMishima(@Event MishimaConfigEvent event) {
         event.useTLS("testkey.jks", "password")
+                .corsAllowOrigin("*")
+                .corsAllowedHeaders(HTTPHeaders.CONTENT_TYPE)
                 .port(8080);
     }
 

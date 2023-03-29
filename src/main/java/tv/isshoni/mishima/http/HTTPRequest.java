@@ -1,5 +1,7 @@
 package tv.isshoni.mishima.http;
 
+import tv.isshoni.mishima.event.config.ReadonlyMishimaConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +11,8 @@ public class HTTPRequest {
     public static final String PATH_PARAMETER_DATA_PREFIX = "PATH_PARAMETER_";
     public static final String HEADER_PARAMETER_DATA_PREFIX = "HEADER_PARAMETER_";
     public static final String BODY_PARAMETER_KEY = "BODY_PARAMETER";
+
+    private final ReadonlyMishimaConfig config;
 
     private final HTTPMethod method;
 
@@ -20,7 +24,8 @@ public class HTTPRequest {
     private final String path;
 
     public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps,
-                       Map<String, String> pathParams, HTTPHeaders headers, String body) {
+                       Map<String, String> pathParams, HTTPHeaders headers, String body, ReadonlyMishimaConfig config) {
+        this.config = config;
         this.method = method;
         this.headers = headers;
         this.path = path;
@@ -37,8 +42,12 @@ public class HTTPRequest {
     }
 
     public HTTPRequest(HTTPMethod method, String path, String httpVersion, Map<String, String> queryProps,
-                       Map<String, String> pathParams, HTTPHeaders headers) {
-        this(method, path, httpVersion, queryProps, pathParams, headers, null);
+                       Map<String, String> pathParams, HTTPHeaders headers, ReadonlyMishimaConfig config) {
+        this(method, path, httpVersion, queryProps, pathParams, headers, null, config);
+    }
+
+    public ReadonlyMishimaConfig getConfig() {
+        return this.config;
     }
 
     public HTTPHeaders getHeaders() {

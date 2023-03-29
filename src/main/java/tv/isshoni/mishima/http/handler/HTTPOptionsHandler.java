@@ -34,16 +34,14 @@ public class HTTPOptionsHandler extends HTTPHandler {
 
         List<Pair<HTTPMethod, HTTPHandler>> handlers = this.service.getHandlersForPath(request.getPath());
 
-        Set<HTTPMethod> already = new HashSet<>();
-
-        HTTPHeaders headers = this.objectFactory.construct(HTTPHeaders.class);
-        headers.addHeader(HTTPHeaders.ALLOW, Streams.to(handlers)
+        Set<HTTPMethod> t = new HashSet<>();
+        String allow = Streams.to(handlers)
                 .collapse((p, s) -> {
-                    if (already.contains(p.getFirst())) {
+                    if (t.contains(p.getFirst())) {
                         return s;
                     }
 
-                    already.add(p.getFirst());
+                    t.add(p.getFirst());
 
                     String str = p.getFirst().name();
                     if (s == null) {
@@ -51,7 +49,38 @@ public class HTTPOptionsHandler extends HTTPHandler {
                     } else {
                         return s + ", " + str;
                     }
-                }));
+                });
+
+        HTTPHeaders headers = this.objectFactory.construct(HTTPHeaders.class);
+        headers.addHeader(HTTPHeaders.ALLOW, allow);
+
+        if (request.getConfig().isCORS()) {
+            headers.addHeader(HTTPHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getConfig().getCORSAllowOrigin());
+            headers.addHeader(HTTPHeaders.ACCESS_CONTROL_ALLOW_METHODS, allow);
+
+            if (request.getConfig().getCORSMaxAge() >= 0) {
+                headers.addHeader(HTTPHeaders.ACCESS_CONTROL_MAX_AGE, Long.toString(request.getConfig().getCORSMaxAge()));
+            }
+
+            if (!request.getConfig().getCORSAllowedHeaders().isEmpty()) {
+                Set<String> a = new HashSet<>();
+
+                headers.addHeader(HTTPHeaders.ACCESS_CONTROL_REQUEST_HEADERS, Streams.to(request.getConfig().getCORSAllowedHeaders())
+                        .collapse((p, s) -> {
+                            if (a.contains(p)) {
+                                return s;
+                            }
+
+                            a.add(p);
+
+                            if (s == null) {
+                                return p;
+                            } else {
+                                return s + ", " + p;
+                            }
+                        }));
+            }
+        }
 
         return new HTTPResponse(HTTPStatus.OK, null, headers, "");
     }
