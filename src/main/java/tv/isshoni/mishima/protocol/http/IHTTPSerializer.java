@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.http;
+package tv.isshoni.mishima.protocol.http;
 
 @FunctionalInterface
 public interface IHTTPSerializer<O> {

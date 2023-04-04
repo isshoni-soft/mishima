@@ -1,6 +1,6 @@
 package tv.isshoni.mishima.annotation.exception;
 
-import tv.isshoni.mishima.http.HTTPStatus;
+import tv.isshoni.mishima.protocol.http.HTTPStatus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

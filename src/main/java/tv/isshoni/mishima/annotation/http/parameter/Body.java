@@ -3,7 +3,7 @@ package tv.isshoni.mishima.annotation.http.parameter;
 import tv.isshoni.araragi.annotation.Processor;
 import tv.isshoni.araragi.annotation.Weight;
 import tv.isshoni.mishima.annotation.processor.http.parameter.BodyProcessor;
-import tv.isshoni.mishima.http.MIMEType;
+import tv.isshoni.mishima.protocol.http.MIMEType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

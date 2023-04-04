@@ -1,19 +1,17 @@
-package tv.isshoni.mishima.http.protocol;
+package tv.isshoni.mishima.protocol;
 
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.mishima.annotation.http.Protocol;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
-import tv.isshoni.mishima.http.HTTPConnection;
-import tv.isshoni.mishima.http.handler.HTTPHandler;
-import tv.isshoni.mishima.http.HTTPHeaders;
-import tv.isshoni.mishima.http.handler.HTTPProtocolExceptionHandler;
-import tv.isshoni.mishima.http.HTTPRequest;
-import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.handler.HTTPService;
-import tv.isshoni.mishima.http.HTTPStatus;
-import tv.isshoni.mishima.http.IHTTPSerializer;
-import tv.isshoni.mishima.http.MIMEType;
+import tv.isshoni.mishima.protocol.http.handler.HTTPHandler;
+import tv.isshoni.mishima.protocol.http.HTTPHeaders;
+import tv.isshoni.mishima.protocol.http.handler.HTTPProtocolExceptionHandler;
+import tv.isshoni.mishima.protocol.http.HTTPRequest;
+import tv.isshoni.mishima.protocol.http.HTTPResponse;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
+import tv.isshoni.mishima.protocol.http.HTTPStatus;
+import tv.isshoni.mishima.protocol.http.IHTTPSerializer;
+import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.annotation.exception.ExceptionHandler;
@@ -27,7 +25,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-@Protocol("1.1")
 public class HTTP1 implements IProtocol {
 
     @Logger("HTTPv1.1") private AraragiLogger logger;
@@ -44,7 +41,7 @@ public class HTTP1 implements IProtocol {
 
     @Override
     @ExceptionHandler(HTTPProtocolExceptionHandler.class)
-    public void handleConnection(HTTPRequest request, HTTPConnection connection) {
+    public void handleConnection(HTTPRequest request, Connection connection) {
         Method enclosing = new Object(){}.getClass().getEnclosingMethod();
 
         this.logger.debug("Handoff successful, using HTTP Protocol: 1.1");
@@ -96,7 +93,7 @@ public class HTTP1 implements IProtocol {
     }
 
     @Override
-    public void respond(HTTPRequest request, HTTPResponse response, HTTPConnection connection) {
+    public void respond(HTTPRequest request, HTTPResponse response, Connection connection) {
         if (response == null) {
             throw new NullPointerException("Unable to serialize response for request: " + request);
         }

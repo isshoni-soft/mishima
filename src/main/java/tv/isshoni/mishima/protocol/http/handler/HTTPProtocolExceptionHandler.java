@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.http.handler;
+package tv.isshoni.mishima.protocol.http.handler;
 
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
@@ -7,13 +7,13 @@ import tv.isshoni.mishima.exception.HTTPProtocolException;
 import tv.isshoni.mishima.exception.parameter.MissingBodyException;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
 import tv.isshoni.mishima.exception.parameter.NeedsContentTypeException;
-import tv.isshoni.mishima.http.HTTPConnection;
-import tv.isshoni.mishima.http.HTTPHeaders;
-import tv.isshoni.mishima.http.HTTPRequest;
-import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.HTTPStatus;
-import tv.isshoni.mishima.http.MIMEType;
-import tv.isshoni.mishima.http.protocol.IProtocol;
+import tv.isshoni.mishima.protocol.Connection;
+import tv.isshoni.mishima.protocol.http.HTTPHeaders;
+import tv.isshoni.mishima.protocol.http.HTTPRequest;
+import tv.isshoni.mishima.protocol.http.HTTPResponse;
+import tv.isshoni.mishima.protocol.http.HTTPStatus;
+import tv.isshoni.mishima.protocol.http.MIMEType;
+import tv.isshoni.mishima.protocol.IProtocol;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.annotation.exception.Handler;
@@ -31,7 +31,7 @@ public class HTTPProtocolExceptionHandler implements IExceptionHandler<HTTPProto
     public void handle(HTTPProtocolException exception) {
         Throwable e = exception.getCause();
         HTTPRequest request = exception.getRequest();
-        HTTPConnection connection = exception.getConnection();
+        Connection connection = exception.getConnection();
         IProtocol protocol = exception.getProtocol();
         HTTPResponse response = null;
         HTTPStatus status = getStatusFromException(e);

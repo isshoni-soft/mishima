@@ -1,6 +1,6 @@
 package tv.isshoni.mishima.event;
 
-import tv.isshoni.mishima.http.HTTPConnection;
+import tv.isshoni.mishima.protocol.Connection;
 import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.context.ILoggerFactory;
 
@@ -10,17 +10,17 @@ import java.net.Socket;
 @Event("connection-event")
 public class ConnectionEvent {
 
-    private final HTTPConnection connection;
+    private final Connection connection;
 
     public ConnectionEvent(Socket client, ILoggerFactory loggerFactory) {
         try {
-            this.connection = new HTTPConnection(client, loggerFactory);
+            this.connection = new Connection(client, loggerFactory);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public HTTPConnection getConnection() {
+    public Connection getConnection() {
         return this.connection;
     }
 }

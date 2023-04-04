@@ -3,7 +3,7 @@ package tv.isshoni.mishima.annotation.processor.http.parameter;
 import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
-import tv.isshoni.mishima.http.HTTPRequest;
+import tv.isshoni.mishima.protocol.http.HTTPRequest;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.processor.IWinryAdvancedAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;

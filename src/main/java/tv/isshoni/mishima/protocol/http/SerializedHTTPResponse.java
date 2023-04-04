@@ -1,6 +1,6 @@
-package tv.isshoni.mishima.http;
+package tv.isshoni.mishima.protocol.http;
 
-import tv.isshoni.mishima.http.handler.HTTPService;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.service.ObjectFactory;
 

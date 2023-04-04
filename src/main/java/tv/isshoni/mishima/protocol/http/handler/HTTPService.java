@@ -1,4 +1,4 @@
-package tv.isshoni.mishima.http.handler;
+package tv.isshoni.mishima.protocol.http.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,38 +9,24 @@ import tv.isshoni.araragi.data.collection.map.SubMap;
 import tv.isshoni.araragi.data.collection.map.TypeMap;
 import tv.isshoni.araragi.data.collection.map.token.TokenMap;
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
-import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
-import tv.isshoni.mishima.event.config.readonly.ReadonlyMishimaHTTPConfig;
-import tv.isshoni.mishima.exception.HTTPFormatException;
-import tv.isshoni.mishima.http.HTTPConnection;
-import tv.isshoni.mishima.http.HTTPHeaders;
-import tv.isshoni.mishima.http.HTTPMethod;
-import tv.isshoni.mishima.http.HTTPRequest;
-import tv.isshoni.mishima.http.IHTTPDeserializer;
-import tv.isshoni.mishima.http.IHTTPSerializer;
-import tv.isshoni.mishima.http.MIMEType;
-import tv.isshoni.mishima.http.protocol.IProtocol;
-import tv.isshoni.mishima.http.protocol.ProtocolService;
-import tv.isshoni.winry.api.annotation.Event;
+import tv.isshoni.mishima.protocol.http.HTTPMethod;
+import tv.isshoni.mishima.protocol.http.IHTTPDeserializer;
+import tv.isshoni.mishima.protocol.http.IHTTPSerializer;
+import tv.isshoni.mishima.protocol.http.MIMEType;
+import tv.isshoni.mishima.service.ProtocolService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
-import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.parameter.Context;
-import tv.isshoni.winry.api.annotation.transformer.Async;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 import tv.isshoni.winry.api.service.ObjectFactory;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Injected
 public class HTTPService {
@@ -152,103 +138,5 @@ public class HTTPService {
 
     public List<Pair<HTTPMethod, HTTPHandler>> getHandlersForPath(String path) {
         return new LinkedList<>(this.handlersByPath.getOrNew(path));
-    }
-
-    @Listener(ConnectionEvent.class)
-    @Async
-    public void handleNewConnection(@Event ConnectionEvent event, @Inject ObjectFactory factory) throws IOException {
-        HTTPConnection connection = event.getConnection();
-
-        // PROCESS FIRST LINE
-        String line = connection.readLine();
-        String[] tokens = line.split(" ");
-
-        if (tokens.length != 3) {
-            throw new HTTPFormatException("malformed first line");
-        }
-
-        HTTPMethod method;
-        try {
-            method = HTTPMethod.valueOf(tokens[0].toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new HTTPFormatException(tokens[0] + " is not a parsable HTTP method");
-        }
-
-        HTTPHeaders requestHeaders = new HTTPHeaders();
-
-        // read until body separator
-        String dataLine;
-        do {
-            dataLine = connection.readLine();
-
-            if (dataLine.contains(":")) {
-                String[] headerTokens = dataLine.split(": ");
-
-                requestHeaders.addHeader(headerTokens[0], headerTokens[1]);
-            }
-        } while (dataLine.length() != 0);
-
-        String body = "";
-        if (requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
-            int contentLength = Integer.parseInt(requestHeaders.getHeader(HTTPHeaders.CONTENT_LENGTH));
-
-            body = connection.read(contentLength);
-        }
-
-        String[] versionTokens = tokens[2].split("/");
-
-        if (versionTokens.length != 2) {
-            throw new HTTPFormatException(tokens[2] + " is not a parsable HTTP version!");
-        }
-
-        String httpVersion = versionTokens[1];
-        String path = tokens[1]; // TODO: Apply basic URL regex checks
-        Map<String, String> queryParameters = new HashMap<>();
-
-        if (path.contains("?")) {
-            int endPath = path.lastIndexOf("?");
-            String queryParams = path.substring(endPath + 1);
-            String[] serializedEntries = queryParams.split("&");
-
-            Streams.to(serializedEntries).forEach(e -> {
-                String[] t = e.split("=");
-
-                if (t.length != 2) {
-                    throw new HTTPFormatException("Malformed query parameter!");
-                }
-
-                queryParameters.put(t[0], t[1]);
-            });
-
-            path = path.substring(0, path.lastIndexOf("?"));
-        }
-
-        if (!path.endsWith("/")) {
-            path = path + "/";
-        }
-
-        Map<String, String> pathParams = new HashMap<>();
-        if (this.hasHandler(method, path)) {
-            this.handlerMap.get(method).getTokenized(path).getSecond().forEach(t ->
-                    pathParams.put(t.getKey(), t.getReplacement()));
-        }
-
-        ReadonlyMishimaHTTPConfig readonlyConfig = new ReadonlyMishimaHTTPConfig(this.httpConfig);
-        HTTPRequest request;
-        if (body.length() > 0) {
-            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    body.trim(), readonlyConfig);
-        } else {
-            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    readonlyConfig);
-        }
-        Optional<IProtocol> protocolOptional = this.protocolService.getProtocol(request.getHTTPVersion());
-
-        logger.debug("Attempting handoff to protocol...");
-        if (protocolOptional.isPresent()) {
-            protocolOptional.get().handleConnection(request, connection);
-        } else {
-            throw new HTTPFormatException(tokens[2] + " is not a supported HTTP version!");
-        }
     }
 }

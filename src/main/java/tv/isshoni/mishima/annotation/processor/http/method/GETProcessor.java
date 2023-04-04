@@ -1,8 +1,8 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
 import tv.isshoni.mishima.annotation.http.method.GET;
-import tv.isshoni.mishima.http.MIMEType;
-import tv.isshoni.mishima.http.handler.HTTPService;
+import tv.isshoni.mishima.protocol.http.MIMEType;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;

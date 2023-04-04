@@ -1,12 +1,12 @@
-package tv.isshoni.mishima.http.handler;
+package tv.isshoni.mishima.protocol.http.handler;
 
 import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.stream.Streams;
-import tv.isshoni.mishima.http.HTTPHeaders;
-import tv.isshoni.mishima.http.HTTPMethod;
-import tv.isshoni.mishima.http.HTTPRequest;
-import tv.isshoni.mishima.http.HTTPResponse;
-import tv.isshoni.mishima.http.HTTPStatus;
+import tv.isshoni.mishima.protocol.http.HTTPHeaders;
+import tv.isshoni.mishima.protocol.http.HTTPMethod;
+import tv.isshoni.mishima.protocol.http.HTTPRequest;
+import tv.isshoni.mishima.protocol.http.HTTPResponse;
+import tv.isshoni.mishima.protocol.http.HTTPStatus;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.service.ObjectFactory;
 

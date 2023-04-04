@@ -4,7 +4,6 @@ import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.Maps;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.annotation.http.HTTPSerializer;
-import tv.isshoni.mishima.annotation.http.Protocol;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
@@ -12,9 +11,8 @@ import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.MishimaInitEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
-import tv.isshoni.mishima.http.handler.HTTPService;
-import tv.isshoni.mishima.http.protocol.HTTP1;
-import tv.isshoni.mishima.http.protocol.ProtocolService;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
+import tv.isshoni.mishima.protocol.HTTP1;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -52,9 +50,7 @@ public class Mishima {
         context.getEventBus().fire(this.serverConfig);
 
         if (this.serverConfig.isHTTP()) {
-            context.addSingleton(ProtocolService.class);
             context.addSingleton(HTTPService.class);
-            context.getAnnotationManager().discoverAnnotation(Protocol.class);
             context.getAnnotationManager().discoverAnnotation(HTTPSerializer.class);
             context.getAnnotationManager().discoverAnnotation(GET.class);
             context.getAnnotationManager().discoverAnnotation(POST.class);
