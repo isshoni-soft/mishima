@@ -7,19 +7,31 @@ public class MishimaServerConfigEvent {
 
     private int port;
 
-    private boolean http;
+    private Type type;
 
     private String keystorePath;
     private String keystorePassword;
 
     public MishimaServerConfigEvent() {
         this.port = -1;
-        this.http = false;
+        this.type = Type.EVENT;
         this.keystorePath = null;
     }
 
     public MishimaServerConfigEvent http() {
-        this.http = true;
+        this.type = Type.HTTP;
+
+        return this;
+    }
+
+    public MishimaServerConfigEvent event() {
+        this.type = Type.EVENT;
+
+        return this;
+    }
+
+    public MishimaServerConfigEvent packet() {
+        this.type = Type.PACKET;
 
         return this;
     }
@@ -50,7 +62,15 @@ public class MishimaServerConfigEvent {
     }
 
     public boolean isHTTP() {
-        return this.http;
+        return this.type == Type.HTTP;
+    }
+
+    public boolean isPacket() {
+        return this.type == Type.PACKET;
+    }
+
+    public boolean isEvent() {
+        return this.type == Type.EVENT;
     }
 
     public boolean isTLS() {
@@ -67,5 +87,11 @@ public class MishimaServerConfigEvent {
         }
 
         return this.port != -1;
+    }
+
+    public enum Type {
+        HTTP,
+        PACKET,
+        EVENT
     }
 }
