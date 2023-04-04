@@ -12,7 +12,7 @@ import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.MishimaInitEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
-import tv.isshoni.mishima.protocol.HTTP1;
+import tv.isshoni.mishima.protocol.http.HTTP;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -57,7 +57,7 @@ public class Mishima {
             context.getAnnotationManager().discoverAnnotation(Body.class);
             context.getAnnotationManager().discoverAnnotation(Path.class);
             context.getAnnotationManager().discoverAnnotation(Query.class);
-            context.addSingleton(HTTP1.class);
+            context.addSingleton(HTTP.class);
         }
     }
 

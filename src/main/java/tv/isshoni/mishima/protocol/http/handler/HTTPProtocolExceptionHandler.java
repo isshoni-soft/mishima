@@ -13,7 +13,7 @@ import tv.isshoni.mishima.protocol.http.HTTPRequest;
 import tv.isshoni.mishima.protocol.http.HTTPResponse;
 import tv.isshoni.mishima.protocol.http.HTTPStatus;
 import tv.isshoni.mishima.protocol.http.MIMEType;
-import tv.isshoni.mishima.protocol.IProtocol;
+import tv.isshoni.mishima.protocol.http.IHTTPProtocol;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.annotation.exception.Handler;
@@ -32,7 +32,7 @@ public class HTTPProtocolExceptionHandler implements IExceptionHandler<HTTPProto
         Throwable e = exception.getCause();
         HTTPRequest request = exception.getRequest();
         Connection connection = exception.getConnection();
-        IProtocol protocol = exception.getProtocol();
+        IHTTPProtocol protocol = exception.getProtocol();
         HTTPResponse response = null;
         HTTPStatus status = getStatusFromException(e);
 

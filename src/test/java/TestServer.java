@@ -10,11 +10,8 @@ import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.protocol.http.MIMEType;
-import tv.isshoni.mishima.protocol.HTTP1;
-import tv.isshoni.mishima.service.ProtocolService;
 import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
-import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
 import tv.isshoni.winry.api.annotation.Logger;
@@ -33,9 +30,8 @@ public class TestServer {
     }
 
     @Listener(MishimaHTTPConfigEvent.class)
-    public void configureHTTP(@Event MishimaHTTPConfigEvent event, @Inject ProtocolService protocolService) {
+    public void configureHTTP(@Event MishimaHTTPConfigEvent event) {
         event.corsAllowOrigin("*");
-        protocolService.useProtocol(HTTP1.class);
     }
 
     @GET("/")

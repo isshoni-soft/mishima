@@ -2,17 +2,17 @@ package tv.isshoni.mishima.exception;
 
 import tv.isshoni.mishima.protocol.Connection;
 import tv.isshoni.mishima.protocol.http.HTTPRequest;
-import tv.isshoni.mishima.protocol.IProtocol;
+import tv.isshoni.mishima.protocol.http.IHTTPProtocol;
 
 public class HTTPProtocolException extends RuntimeException {
 
-    private final IProtocol protocol;
+    private final IHTTPProtocol protocol;
 
     private final HTTPRequest request;
 
     private final Connection connection;
 
-    public HTTPProtocolException(IProtocol protocol, Connection connection, HTTPRequest request, Throwable throwable) {
+    public HTTPProtocolException(IHTTPProtocol protocol, Connection connection, HTTPRequest request, Throwable throwable) {
         super(throwable);
 
         this.protocol = protocol;
@@ -20,7 +20,7 @@ public class HTTPProtocolException extends RuntimeException {
         this.request = request;
     }
 
-    public IProtocol getProtocol() {
+    public IHTTPProtocol getProtocol() {
         return this.protocol;
     }
 
