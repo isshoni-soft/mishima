@@ -20,22 +20,29 @@ dependencies {
 TODO List
 ---------
 - [x] Socket Server
-  - [ ] Abstract Protocol System
-    - [ ] Custom protocols via Protocol annotation..?
-  - [x] HTTP Protocol
+  - [x] SSL
+- [x] Event
+  - Socket server by default publishes ConnectionEvents, this type will keep it that way.
+- [ ] Packet
+  - Turns server into simple JSON packet protocol consumer, might practice some encapsulation.
+  - Still highly in design phase and might hang in permanent limbo. HTTP & event is main focus.
+- [ ] HTTP -- in "usable" state currently
+  - Hooks in HTTP server management services & annotations to turn into spring-like library.
+  - [ ] Protocol
     - [x] HTTP/1.1
     - [ ] HTTP/2
     - [ ] HTTP/3
-- [ ] HTTP Methods
-  - [x] GET
-  - [x] POST
-  - [ ] PUT
-  - [ ] CONNECT
-  - [ ] DELETE
-  - [ ] HEAD
-  - [ ] OPTIONS
-  - [ ] TRACE
-- [x] HTTPS functionality
-- [x] CORS..?
-  - [ ] Verify that more is not required for proper CORS integration.
-- [x] Request body serialization
+  - [ ] Methods
+    - [x] GET
+    - [x] POST
+    - [x] PUT
+    - [ ] CONNECT
+    - [ ] DELETE
+    - [ ] HEAD
+      - This will be fully automated, only works for GET requests.
+    - [x] OPTIONS
+      - Automated for CORS, but can also be manually done.
+    - [ ] TRACE
+  - [x] CORS
+    - [ ] Verify that more is not required for proper CORS integration.
+  - [x] Request body serialization

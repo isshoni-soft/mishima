@@ -5,21 +5,11 @@ import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.context.IWinryContext;
-import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 public class GETProcessor extends SimpleHTTPMethodProcessor<GET> {
 
     public GETProcessor(@Inject HTTPService service, @Inject IWinryContext context) {
         super(service, context, GET.class);
-    }
-
-    @Override
-    protected RuntimeException validate(IAnnotatedMethod method, Object target, GET annotation) {
-        if (method.getReturnType().equals(void.class)) {
-            return new IllegalStateException("Cannot make void return type HTTP GET method!");
-        }
-
-        return null;
     }
 
     @Override

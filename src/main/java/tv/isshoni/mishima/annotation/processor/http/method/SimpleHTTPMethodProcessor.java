@@ -7,7 +7,6 @@ import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.CONNECT;
 import tv.isshoni.mishima.annotation.http.method.DELETE;
 import tv.isshoni.mishima.annotation.http.method.GET;
-import tv.isshoni.mishima.annotation.http.method.HEAD;
 import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.method.PUT;
 import tv.isshoni.mishima.annotation.http.method.TRACE;
@@ -30,7 +29,6 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
         put(GET.class, HTTPMethod.GET);
         put(CONNECT.class, HTTPMethod.CONNECT);
         put(DELETE.class, HTTPMethod.DELETE);
-        put(HEAD.class, HTTPMethod.HEAD);
         put(POST.class, HTTPMethod.POST);
         put(PUT.class, HTTPMethod.PUT);
         put(TRACE.class, HTTPMethod.TRACE);
@@ -52,6 +50,12 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
     }
 
     protected RuntimeException validate(IAnnotatedMethod method, Object target, A annotation) {
+        HTTPMethod httpMethod = getHTTPMethod();
+
+        if (method.getReturnType().equals(void.class) && httpMethod.hasOutgoingBody()) {
+            return new IllegalStateException("Cannot make void return type HTTP " + httpMethod.name() + " method!");
+        }
+
         return null;
     }
 

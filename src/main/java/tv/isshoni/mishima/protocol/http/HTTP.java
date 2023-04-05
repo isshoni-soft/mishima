@@ -3,23 +3,24 @@ package tv.isshoni.mishima.protocol.http;
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
+import tv.isshoni.mishima.annotation.http.HTTPSerializer;
+import tv.isshoni.mishima.annotation.http.method.DELETE;
+import tv.isshoni.mishima.annotation.http.method.GET;
+import tv.isshoni.mishima.annotation.http.method.OPTIONS;
+import tv.isshoni.mishima.annotation.http.method.POST;
+import tv.isshoni.mishima.annotation.http.method.PUT;
+import tv.isshoni.mishima.annotation.http.parameter.Body;
+import tv.isshoni.mishima.annotation.http.parameter.Path;
+import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 import tv.isshoni.mishima.event.config.readonly.ReadonlyMishimaHTTPConfig;
 import tv.isshoni.mishima.exception.HTTPFormatException;
 import tv.isshoni.mishima.exception.HTTPProtocolException;
 import tv.isshoni.mishima.protocol.Connection;
-import tv.isshoni.mishima.protocol.http.HTTPMethod;
-import tv.isshoni.mishima.protocol.http.IHTTPProtocol;
 import tv.isshoni.mishima.protocol.http.handler.HTTPHandler;
-import tv.isshoni.mishima.protocol.http.HTTPHeaders;
 import tv.isshoni.mishima.protocol.http.handler.HTTPProtocolExceptionHandler;
-import tv.isshoni.mishima.protocol.http.HTTPRequest;
-import tv.isshoni.mishima.protocol.http.HTTPResponse;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
-import tv.isshoni.mishima.protocol.http.HTTPStatus;
-import tv.isshoni.mishima.protocol.http.IHTTPSerializer;
-import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
@@ -34,6 +35,7 @@ import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.exception.EventExecutionException;
 import tv.isshoni.winry.api.service.ObjectFactory;
 import tv.isshoni.winry.api.service.VersionService;
+import tv.isshoni.winry.internal.model.annotation.IWinryAnnotationManager;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -60,6 +62,17 @@ public class HTTP implements IHTTPProtocol {
     public HTTP(@Context IWinryContext context) {
         this.httpConfig = new MishimaHTTPConfigEvent();
 
+        IWinryAnnotationManager annotationManager = context.getAnnotationManager();
+        annotationManager.discoverAnnotation(HTTPSerializer.class);
+        annotationManager.discoverAnnotation(GET.class);
+        annotationManager.discoverAnnotation(POST.class);
+        annotationManager.discoverAnnotation(OPTIONS.class);
+        annotationManager.discoverAnnotation(PUT.class);
+        annotationManager.discoverAnnotation(DELETE.class);
+        annotationManager.discoverAnnotation(Body.class);
+        annotationManager.discoverAnnotation(Path.class);
+        annotationManager.discoverAnnotation(Query.class);
+
         try {
             context.getEventBus().fire(this.httpConfig);
         } catch (EventExecutionException e) {
@@ -72,7 +85,7 @@ public class HTTP implements IHTTPProtocol {
     public void handleNewConnection(@Event ConnectionEvent event, @Inject ObjectFactory factory) throws IOException {
         Connection connection = event.getConnection();
 
-        // PROCESS FIRST LINE
+        // process first line
         String line = connection.readLine();
         String[] tokens = line.split(" ");
 
@@ -89,7 +102,7 @@ public class HTTP implements IHTTPProtocol {
 
         HTTPHeaders requestHeaders = new HTTPHeaders();
 
-        // read until body separator
+        // read all headers, read until newline between headers & body is encountered.
         String dataLine;
         do {
             dataLine = connection.readLine();
@@ -101,8 +114,9 @@ public class HTTP implements IHTTPProtocol {
             }
         } while (dataLine.length() != 0);
 
+        // find content-length header & read body.
         String body = "";
-        if (requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
+        if (method.hasIncomingBody() && requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
             int contentLength = Integer.parseInt(requestHeaders.getHeader(HTTPHeaders.CONTENT_LENGTH));
 
             body = connection.read(contentLength);
@@ -118,6 +132,7 @@ public class HTTP implements IHTTPProtocol {
         String path = tokens[1]; // TODO: Apply basic URL regex checks
         Map<String, String> queryParameters = new HashMap<>();
 
+        // parse query parameters
         if (path.contains("?")) {
             int endPath = path.lastIndexOf("?");
             String queryParams = path.substring(endPath + 1);

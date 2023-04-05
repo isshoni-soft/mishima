@@ -82,7 +82,8 @@ public class TestServer {
         return "Other user!";
     }
 
-    // TODO: BROKEN, DOESN'T WORK, IDK WHY -- fix me at some point
+    // TODO: BROKEN, DOESN'T WORK, IDK WHY
+    // TODO: this functionality is preventing unit testing, once shutdown works unit testing will be possible
 //    @GET("/shutdown")
 //    public String shutdown(@Inject IWinryContext context) {
 //        context.shutdown();

@@ -3,16 +3,10 @@ package tv.isshoni.mishima;
 import tv.isshoni.araragi.data.Pair;
 import tv.isshoni.araragi.data.collection.map.Maps;
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.mishima.annotation.http.HTTPSerializer;
-import tv.isshoni.mishima.annotation.http.method.GET;
-import tv.isshoni.mishima.annotation.http.method.POST;
-import tv.isshoni.mishima.annotation.http.parameter.Body;
-import tv.isshoni.mishima.annotation.http.parameter.Path;
-import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.MishimaInitEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
-import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.mishima.protocol.http.HTTP;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
@@ -51,12 +45,6 @@ public class Mishima {
 
         if (this.serverConfig.isHTTP()) {
             context.addSingleton(HTTPService.class);
-            context.getAnnotationManager().discoverAnnotation(HTTPSerializer.class);
-            context.getAnnotationManager().discoverAnnotation(GET.class);
-            context.getAnnotationManager().discoverAnnotation(POST.class);
-            context.getAnnotationManager().discoverAnnotation(Body.class);
-            context.getAnnotationManager().discoverAnnotation(Path.class);
-            context.getAnnotationManager().discoverAnnotation(Query.class);
             context.addSingleton(HTTP.class);
         }
     }
