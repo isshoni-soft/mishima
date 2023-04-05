@@ -81,4 +81,12 @@ public class TestServer {
     public String getOtherUser() {
         return "Other user!";
     }
+
+    // TODO: BROKEN, DOESN'T WORK, IDK WHY -- fix me at some point
+//    @GET("/shutdown")
+//    public String shutdown(@Inject IWinryContext context) {
+//        context.shutdown();
+//
+//        return "Shutdown!";
+//    }
 }

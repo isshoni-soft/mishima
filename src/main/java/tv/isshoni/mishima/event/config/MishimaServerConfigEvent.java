@@ -30,11 +30,11 @@ public class MishimaServerConfigEvent {
         return this;
     }
 
-    public MishimaServerConfigEvent packet() {
-        this.type = Type.PACKET;
-
-        return this;
-    }
+//    public MishimaServerConfigEvent packet() {
+//        this.type = Type.PACKET;
+//
+//        return this;
+//    }
 
     public MishimaServerConfigEvent useTLS(String keystorePath, String keystorePassword) {
         this.keystorePath = keystorePath;
