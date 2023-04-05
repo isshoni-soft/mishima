@@ -33,8 +33,7 @@ TODO List
   - [ ] CONNECT
   - [ ] DELETE
   - [ ] HEAD
-  - [x] OPTIONS
-    - [x] Automated
+  - [ ] OPTIONS
   - [ ] TRACE
 - [x] HTTPS functionality
 - [x] CORS..?
