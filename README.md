@@ -38,11 +38,21 @@ TODO List
     - [x] PUT
     - [ ] CONNECT
     - [x] DELETE
-    - [ ] HEAD
-      - This will be fully automated, only works for GET requests.
+    - [x] HEAD
     - [x] OPTIONS
       - Automated for CORS, but can also be manually done.
     - [ ] TRACE
   - [x] CORS
     - [ ] Verify that more is not required for proper CORS integration.
-  - [x] Request body serialization
+  - [ ] Serialization
+    - [ ] Responses
+      - [x] Basic GSON object serialization
+      - [x] Advanced serialization via serializers
+      - [x] Special response serialization, i.e. custom headers, response code, etc.
+        - [ ] Add parameter annotations that allow for response customization without needing to
+          return a response object
+  - [ ] Deserialization
+    - [x] Body
+      - [x] Json
+    - [ ] Query Parameter
+      - [ ] Special serializers, allow for embedding objects into query params
