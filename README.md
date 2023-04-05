@@ -37,7 +37,7 @@ TODO List
     - [x] POST
     - [x] PUT
     - [ ] CONNECT
-    - [ ] DELETE
+    - [x] DELETE
     - [ ] HEAD
       - This will be fully automated, only works for GET requests.
     - [x] OPTIONS
