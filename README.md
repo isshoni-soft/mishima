@@ -36,13 +36,13 @@ TODO List
     - [x] GET
     - [x] POST
     - [x] PUT
-    - [ ] CONNECT
+    - ~~CONNECT~~
       - Will not implement for now, doesn't seem "related"
     - [x] DELETE
     - [x] HEAD
     - [x] OPTIONS
       - Automated for CORS, but can also be manually done.
-    - [ ] TRACE
+    - ~~TRACE~~
       - Will not implement for now, doesn't seem "related"
   - [x] CORS
     - [ ] Verify that more is not required for proper CORS integration.
