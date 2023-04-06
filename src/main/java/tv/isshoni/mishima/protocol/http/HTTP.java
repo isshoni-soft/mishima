@@ -155,6 +155,7 @@ public class HTTP implements IHTTPProtocol {
             path = path + "/";
         }
 
+        // parse path parameters
         Map<String, String> pathParams = new HashMap<>();
         if (this.service.hasHandler(method, path)) {
             this.service.getTokenMapForMethod(method).getTokenized(path).getSecond().forEach(t ->
@@ -163,6 +164,7 @@ public class HTTP implements IHTTPProtocol {
 
         ReadonlyMishimaHTTPConfig readonlyConfig = new ReadonlyMishimaHTTPConfig(this.httpConfig);
         HTTPRequest request;
+        // create request object, either with body or without.
         if (body.length() > 0) {
             request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
                     body.trim(), readonlyConfig);
@@ -186,6 +188,7 @@ public class HTTP implements IHTTPProtocol {
         String path = request.getPath();
         HTTPHeaders responseHeaders = this.objectFactory.construct(HTTPHeaders.class);
 
+        // look for handler
         if (!this.service.hasHandler(request.getMethod(), path)) {
             logger.warn("No handler registered for: " + request);
             respond(request, new HTTPResponse(HTTPStatus.NOT_FOUND, MIMEType.TEXT, responseHeaders,
@@ -196,6 +199,7 @@ public class HTTP implements IHTTPProtocol {
 
         logger.info(request.toString());
 
+        // execute handler & get result
         Object result;
         HTTPResponse response = null;
         try {
@@ -235,12 +239,17 @@ public class HTTP implements IHTTPProtocol {
             response.getHeaders().addHeader(HTTPHeaders.CONTENT_TYPE, response.getMIMEType().getSerialized());
         }
 
+        // write first line
         connection.write("HTTP/1.1 " + response.getCode() + " " + response.getStatus().name());
 
-        response.getHeaders().forEach((header, value) -> connection.write(header + ": " + value));
+        // write headers
+        response.getHeaders()
+                .forEach((header, value) -> connection.write(header + ": " + value));
 
-        connection.write(""); // needs blank line between headers & content
+        // blank between headers & body content.
+        connection.write("");
 
+        // write body
         if (response.getBody().length() > 0) {
             connection.write(response.getBody());
         }
