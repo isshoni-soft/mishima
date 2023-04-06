@@ -4,35 +4,18 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.araragi.string.format.StringToken;
 import tv.isshoni.mishima.Mishima;
-import tv.isshoni.mishima.annotation.http.method.CONNECT;
-import tv.isshoni.mishima.annotation.http.method.DELETE;
-import tv.isshoni.mishima.annotation.http.method.GET;
-import tv.isshoni.mishima.annotation.http.method.POST;
-import tv.isshoni.mishima.annotation.http.method.PUT;
-import tv.isshoni.mishima.annotation.http.method.TRACE;
 import tv.isshoni.mishima.protocol.http.HTTPMethod;
-import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.mishima.protocol.http.MIMEType;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements IWinryAnnotationProcessor<A> {
-
-    private static final Map<Class<? extends Annotation>, HTTPMethod> ANNOTATION_TO_METHOD = new HashMap<>() {{
-        put(GET.class, HTTPMethod.GET);
-        put(CONNECT.class, HTTPMethod.CONNECT);
-        put(DELETE.class, HTTPMethod.DELETE);
-        put(POST.class, HTTPMethod.POST);
-        put(PUT.class, HTTPMethod.PUT);
-        put(TRACE.class, HTTPMethod.TRACE);
-    }};
 
     protected final List<Class<? extends Annotation>> incompatible;
 
@@ -46,7 +29,9 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
         this.service = service;
         this.context = context;
         this.clazz = clazz;
-        this.incompatible = ANNOTATION_TO_METHOD.keySet().stream().filter(c -> !c.equals(clazz)).toList();
+        this.incompatible = Streams.to(HTTPMethod.getAnnotations())
+                .filter(c -> !c.equals(clazz))
+                .toList();
     }
 
     protected RuntimeException validate(IAnnotatedMethod method, Object target, A annotation) {
@@ -60,7 +45,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
     }
 
     public HTTPMethod getHTTPMethod() {
-        return ANNOTATION_TO_METHOD.get(this.clazz);
+        return HTTPMethod.getFromAnnotation(this.clazz);
     }
 
     public abstract String getPath(A annotation);
