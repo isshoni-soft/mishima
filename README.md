@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'tv.isshoni:mishima:0.7.0'
+    implementation 'tv.isshoni:mishima:0.8.0'
 }
 ```
 
