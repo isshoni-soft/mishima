@@ -4,6 +4,8 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
 import tv.isshoni.mishima.protocol.http.HTTPRequest;
+import tv.isshoni.mishima.protocol.http.IHTTPDeserializer;
+import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.processor.IWinryAdvancedAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
@@ -11,16 +13,19 @@ import tv.isshoni.winry.api.context.IWinryContext;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
-public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, String> {
+public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, Object> {
 
     private final IWinryContext context;
 
-    public QueryProcessor(@Inject IWinryContext context) {
+    private final HTTPService service;
+
+    public QueryProcessor(@Inject IWinryContext context, @Inject HTTPService service) {
         this.context = context;
+        this.service = service;
     }
 
     @Override
-    public String supply(Query annotation, String previous, Parameter parameter, Map<String, Object> runtimeContext) {
+    public Object supply(Query annotation, Object previous, Parameter parameter, Map<String, Object> runtimeContext) {
         Map<String, String> queryParams = Streams.to(runtimeContext)
                 .filter((k, v) -> k.startsWith(HTTPRequest.QUERY_PARAMETER_DATA_PREFIX))
                 .mapFirst(k -> k.substring(HTTPRequest.QUERY_PARAMETER_DATA_PREFIX.length()))
@@ -31,7 +36,14 @@ public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, 
             throw new MissingRequiredParameterException(annotation.value(), "query");
         }
 
-        return queryParams.get(annotation.value());
+        IHTTPDeserializer<Object> deserializer = (IHTTPDeserializer<Object>) this.service.getDeserializer(parameter.getType());
+        String data = queryParams.get(annotation.value());
+
+        if (deserializer != null) {
+            return deserializer.deserialize(data);
+        }
+
+        return data;
     }
 
     @Override

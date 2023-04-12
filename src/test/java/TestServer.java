@@ -18,7 +18,7 @@ import tv.isshoni.winry.api.annotation.Logger;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
-           manualLoad = { Mishima.class }),
+           manualLoad = { Mishima.class, QueryDTODeserializer.class }),
            defaultLevel = Level.DEBUG)
 public class TestServer {
 
@@ -35,8 +35,12 @@ public class TestServer {
     }
 
     @GET("/")
-    public String index() {
-        return "Hello, World!";
+    public String index(@Query("v") QueryDTO dto) {
+        if (dto == null) {
+            return "Could not find user!";
+        }
+
+        return "Hello, " + dto.getV();
     }
 
     @POST("/")

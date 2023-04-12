@@ -3,7 +3,7 @@ package tv.isshoni.mishima.protocol.http;
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
-import tv.isshoni.mishima.annotation.http.HTTPSerializer;
+import tv.isshoni.mishima.annotation.http.Serialization;
 import tv.isshoni.mishima.annotation.http.method.DELETE;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.OPTIONS;
@@ -63,7 +63,7 @@ public class HTTP implements IHTTPProtocol {
         this.httpConfig = new MishimaHTTPConfigEvent();
 
         IWinryAnnotationManager annotationManager = context.getAnnotationManager();
-        annotationManager.discoverAnnotation(HTTPSerializer.class);
+        annotationManager.discoverAnnotation(Serialization.class);
         annotationManager.discoverAnnotation(GET.class);
         annotationManager.discoverAnnotation(POST.class);
         annotationManager.discoverAnnotation(OPTIONS.class);
