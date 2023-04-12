@@ -92,6 +92,8 @@ public class HTTP implements IHTTPProtocol {
         String[] tokens = line.split(" ");
 
         if (tokens.length != 3) {
+            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                    "I cannot understand you. (malformed first line)"), connection);
             throw new HTTPFormatException("malformed first line");
         }
 
@@ -99,7 +101,11 @@ public class HTTP implements IHTTPProtocol {
         try {
             method = HTTPMethod.valueOf(tokens[0].toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new HTTPFormatException(tokens[0] + " is not a parsable HTTP method");
+            String responseLine = tokens[0] + " is not a parsable HTTP method";
+
+            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                    responseLine), connection);
+            throw new HTTPFormatException(responseLine);
         }
 
         HTTPHeaders requestHeaders = new HTTPHeaders();
@@ -127,7 +133,11 @@ public class HTTP implements IHTTPProtocol {
         String[] versionTokens = tokens[2].split("/");
 
         if (versionTokens.length != 2) {
-            throw new HTTPFormatException(tokens[2] + " is not a parsable HTTP version!");
+            String responseLine = tokens[2] + " is not a parsable HTTP version!";
+
+            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                    responseLine), connection);
+            throw new HTTPFormatException(responseLine);
         }
 
         String httpVersion = versionTokens[1];
@@ -144,7 +154,11 @@ public class HTTP implements IHTTPProtocol {
                 String[] t = e.split("=");
 
                 if (t.length != 2) {
-                    throw new HTTPFormatException("Malformed query parameter!");
+                    String responseLine = "Malformed query parameter!";
+
+                    respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                            responseLine), connection);
+                    throw new HTTPFormatException(responseLine);
                 }
 
                 queryParameters.put(t[0], t[1]);
@@ -193,7 +207,7 @@ public class HTTP implements IHTTPProtocol {
         // look for handler
         if (!this.service.hasHandler(request.getMethod(), path)) {
             logger.warn("No handler registered for: " + request);
-            respond(request, new HTTPResponse(HTTPStatus.NOT_FOUND, MIMEType.TEXT, responseHeaders,
+            respond(new HTTPResponse(HTTPStatus.NOT_FOUND, MIMEType.TEXT, responseHeaders,
                     "Not Found"), connection);
 
             return;
@@ -229,12 +243,12 @@ public class HTTP implements IHTTPProtocol {
             response = new HTTPResponse(HTTPStatus.OK, handler.getMIMEType(), responseHeaders, body);
         }
 
-        respond(request, response, connection);
+        respond(response, connection);
     }
 
-    public void respond(HTTPRequest request, HTTPResponse response, Connection connection) {
+    public void respond(HTTPResponse response, Connection connection) {
         if (response == null) {
-            throw new NullPointerException("Unable to serialize response for request: " + request);
+            throw new NullPointerException("Unable to serialize response!");
         }
 
         if (response.getMIMEType() != null) {

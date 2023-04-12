@@ -58,7 +58,7 @@ public class HTTPProtocolExceptionHandler implements IExceptionHandler<HTTPProto
         this.logger.error("Recovered from error while executing path: " + request.getPath());
         this.logger.error(Exceptions.toString(e));
 
-        protocol.respond(request, response, connection);
+        protocol.respond(response, connection);
     }
 
     private HTTPStatus getStatusFromException(Throwable throwable) {
