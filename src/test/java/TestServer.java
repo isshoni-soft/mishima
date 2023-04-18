@@ -5,7 +5,6 @@ import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
-import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
@@ -18,7 +17,7 @@ import tv.isshoni.winry.api.annotation.Logger;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
-           manualLoad = { Mishima.class, QueryDTODeserializer.class }),
+           manualLoad = { Mishima.class, QueryDTODeserializer.class, UsersOverseer.class }),
            defaultLevel = Level.DEBUG)
 public class TestServer {
 
@@ -54,26 +53,6 @@ public class TestServer {
         object.addProperty("new_user", user);
 
         return object;
-    }
-
-    @POST(value = "/users/create")
-    public JsonObject create(@Body(MIMEType.JSON) CreateUserDTO dto) {
-        JsonObject object = new JsonObject();
-        object.addProperty("status", "successfully created");
-        object.addProperty("user", dto.getUsername());
-
-        return object;
-    }
-
-    @GET("/users/{userId}")
-    public String getUser(@Path("userId") String userId) {
-        return "User: " + userId;
-    }
-
-    @GET("/users/{userId}/verify")
-    public String verifyUser(@Path("userId") String userId,
-                             @Query(value = "token", optional = true) String token) {
-        return "Verified user: " + userId + " with token: " + token;
     }
 
     @GET("/testDTO")

@@ -13,12 +13,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'tv.isshoni:mishima:0.8.1'
+    implementation 'tv.isshoni:mishima:0.8.4'
 }
 ```
 
 TODO List
 ---------
+- [ ] Try to generify `@Overseer`, move it away from being HTTP pigeonholed
 - [x] Socket Server
   - [x] SSL
 - [x] Event

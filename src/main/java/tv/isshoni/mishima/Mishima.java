@@ -6,6 +6,7 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.MishimaInitEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.protocol.http.HTTP;
+import tv.isshoni.mishima.protocol.http.OverseerService;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
@@ -19,9 +20,9 @@ import tv.isshoni.winry.api.service.VersionService;
 import java.util.regex.Pattern;
 
 @Loader(
+        manualLoad = ConnectionService.class,
         loadPackage = {
                 "tv.isshoni.mishima.event",
-                "tv.isshoni.mishima.service" // only load events and connection indiscriminately
         }
 )
 public class Mishima {
@@ -45,6 +46,7 @@ public class Mishima {
 
         if (this.serverConfig.isHTTP()) {
             context.addSingleton(HTTPService.class);
+            context.addSingleton(OverseerService.class);
             context.addSingleton(HTTP.class);
         }
     }

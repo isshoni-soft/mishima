@@ -2,6 +2,7 @@ package tv.isshoni.mishima.annotation.http;
 
 import tv.isshoni.araragi.annotation.Processor;
 import tv.isshoni.araragi.annotation.Weight;
+import tv.isshoni.mishima.annotation.processor.http.OverseerProcessor;
 import tv.isshoni.winry.internal.annotation.processor.type.BootstrapClassProcessor;
 
 import java.lang.annotation.ElementType;
@@ -13,11 +14,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Weight(
         value = Overseer.DEFAULT_WEIGHT,
-        dynamic = "value"
+        dynamic = "weight"
 )
-@Processor(BootstrapClassProcessor.class)
+@Processor({OverseerProcessor.class, BootstrapClassProcessor.class})
 public @interface Overseer {
+
     int DEFAULT_WEIGHT = 2147483146;
 
-    int value() default DEFAULT_WEIGHT;
+    String value() default "/";
+
+    int weight() default DEFAULT_WEIGHT;
 }
