@@ -94,6 +94,7 @@ public class HTTP implements IHTTPProtocol {
         if (tokens.length != 3) {
             respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
                     "I cannot understand you. (malformed first line)"), connection);
+            logger.error("Encountered malformed first line: " + line);
             throw new HTTPFormatException("malformed first line");
         }
 
