@@ -1,6 +1,7 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
 import tv.isshoni.mishima.annotation.http.method.HEAD;
+import tv.isshoni.mishima.protocol.http.HTTP;
 import tv.isshoni.mishima.protocol.http.HTTPMethod;
 import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.mishima.protocol.http.OverseerService;
@@ -11,8 +12,9 @@ import tv.isshoni.winry.api.meta.IAnnotatedMethod;
 
 public class HEADProcessor extends SimpleHTTPMethodProcessor<HEAD> {
 
-    public HEADProcessor(@Inject HTTPService service, @Inject OverseerService overseerService, @Inject IWinryContext context) {
-        super(service, overseerService, context, HEAD.class);
+    public HEADProcessor(@Inject HTTPService service, @Inject HTTP http, @Inject OverseerService overseerService,
+                         @Inject IWinryContext context) {
+        super(service, http, overseerService, context, HEAD.class);
     }
 
     @Override

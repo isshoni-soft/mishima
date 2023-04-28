@@ -12,13 +12,25 @@ public class MishimaHTTPConfigEvent {
     private long corsMaxAge;
 
     private String corsAllowOrigin;
+    private String prefix;
 
     private final List<String> allowHeaders;
 
     public MishimaHTTPConfigEvent() {
         this.corsMaxAge = -1;
+        this.prefix = "";
         this.corsAllowOrigin = null;
         this.allowHeaders = new LinkedList<>();
+    }
+
+    public MishimaHTTPConfigEvent prefix(String prefix) {
+        if (!prefix.startsWith("/")) {
+            prefix = "/" + prefix;
+        }
+
+        this.prefix = prefix;
+
+        return this;
     }
 
     public MishimaHTTPConfigEvent corsAllowedHeaders(String... header) {
@@ -45,6 +57,10 @@ public class MishimaHTTPConfigEvent {
 
     public String getCORSAllowOrigin() {
         return this.corsAllowOrigin;
+    }
+
+    public String getPrefix() {
+        return this.prefix;
     }
 
     public List<String> getCORSAllowedHeaders() {

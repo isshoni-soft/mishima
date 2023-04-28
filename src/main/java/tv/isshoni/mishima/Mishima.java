@@ -48,6 +48,8 @@ public class Mishima {
             context.addSingleton(HTTPService.class);
             context.addSingleton(OverseerService.class);
             context.addSingleton(HTTP.class);
+
+            ((HTTP) context.getInstanceManager().getSingletonInjection(HTTP.class)).init();
         }
     }
 

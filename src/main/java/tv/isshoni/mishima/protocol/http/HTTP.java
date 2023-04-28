@@ -26,10 +26,10 @@ import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
-import tv.isshoni.winry.api.annotation.Logger;
 import tv.isshoni.winry.api.annotation.exception.ExceptionHandler;
 import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.transformer.Async;
+import tv.isshoni.winry.api.context.IContextual;
 import tv.isshoni.winry.api.context.IEventBus;
 import tv.isshoni.winry.api.context.IExceptionManager;
 import tv.isshoni.winry.api.context.IWinryContext;
@@ -44,9 +44,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Injected
-public class HTTP implements IHTTPProtocol {
+public class HTTP implements IHTTPProtocol, IContextual {
 
-    @Logger("HTTP") private AraragiLogger logger;
+    private final AraragiLogger logger;
 
     @Inject private HTTPService service;
 
@@ -60,10 +60,24 @@ public class HTTP implements IHTTPProtocol {
 
     private final MishimaHTTPConfigEvent httpConfig;
 
+    private final IWinryContext context;
+
     public HTTP(@Context IWinryContext context) {
         this.httpConfig = new MishimaHTTPConfigEvent();
+        this.context = context;
+        this.logger = this.context.createLogger("HTTP");
 
-        IWinryAnnotationManager annotationManager = context.getAnnotationManager();
+        try {
+            context.getEventBus().fire(this.httpConfig);
+        } catch (EventExecutionException e) {
+            context.getExceptionManager().toss(e);
+        }
+    }
+
+    public void init() {
+        logger.info("Registering HTTP annotations...");
+
+        IWinryAnnotationManager annotationManager = this.context.getAnnotationManager();
         annotationManager.discoverAnnotation(Overseer.class);
         annotationManager.discoverAnnotation(Serialization.class);
         annotationManager.discoverAnnotation(GET.class);
@@ -74,12 +88,10 @@ public class HTTP implements IHTTPProtocol {
         annotationManager.discoverAnnotation(Body.class);
         annotationManager.discoverAnnotation(Path.class);
         annotationManager.discoverAnnotation(Query.class);
+    }
 
-        try {
-            context.getEventBus().fire(this.httpConfig);
-        } catch (EventExecutionException e) {
-            context.getExceptionManager().toss(e);
-        }
+    public MishimaHTTPConfigEvent getHttpConfig() {
+        return this.httpConfig;
     }
 
     @Listener(ConnectionEvent.class)
@@ -276,5 +288,10 @@ public class HTTP implements IHTTPProtocol {
         } catch (IOException e) {
             throw Exceptions.rethrow(e);
         }
+    }
+
+    @Override
+    public IWinryContext getContext() {
+        return this.context;
     }
 }

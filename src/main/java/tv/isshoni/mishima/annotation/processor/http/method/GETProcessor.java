@@ -1,6 +1,7 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
 import tv.isshoni.mishima.annotation.http.method.GET;
+import tv.isshoni.mishima.protocol.http.HTTP;
 import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.mishima.protocol.http.OverseerService;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
@@ -9,8 +10,9 @@ import tv.isshoni.winry.api.context.IWinryContext;
 
 public class GETProcessor extends SimpleHTTPMethodProcessor<GET> {
 
-    public GETProcessor(@Inject HTTPService service, @Inject OverseerService overseerService, @Inject IWinryContext context) {
-        super(service, overseerService, context, GET.class);
+    public GETProcessor(@Inject HTTPService service, @Inject HTTP http, @Inject OverseerService overseerService,
+                        @Inject IWinryContext context) {
+        super(service, http, overseerService, context, GET.class);
     }
 
     @Override

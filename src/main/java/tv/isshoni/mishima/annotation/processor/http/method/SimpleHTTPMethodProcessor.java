@@ -4,7 +4,7 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.araragi.string.format.StringToken;
 import tv.isshoni.mishima.Mishima;
-import tv.isshoni.mishima.annotation.http.Overseer;
+import tv.isshoni.mishima.protocol.http.HTTP;
 import tv.isshoni.mishima.protocol.http.HTTPMethod;
 import tv.isshoni.mishima.protocol.http.MIMEType;
 import tv.isshoni.mishima.protocol.http.OverseerService;
@@ -26,12 +26,16 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     protected final HTTPService httpService;
 
+    protected final HTTP http;
+
     protected final OverseerService overseerService;
 
     protected final Class<A> clazz;
 
-    public SimpleHTTPMethodProcessor(HTTPService httpService, OverseerService overseerService, IWinryContext context, Class<A> clazz) {
+    public SimpleHTTPMethodProcessor(HTTPService httpService, HTTP http, OverseerService overseerService,
+                                     IWinryContext context, Class<A> clazz) {
         this.httpService = httpService;
+        this.http = http;
         this.overseerService = overseerService;
         this.context = context;
         this.clazz = clazz;
@@ -60,8 +64,22 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     @Override
     public void executeMethod(IAnnotatedMethod method, Object target, A annotation) {
-        String prefix = Optional.ofNullable(this.overseerService.getPath(method.getDeclaringClass()))
-                .map(Overseer::value).orElse("");
+        String prefix = this.http.getHttpConfig().getPrefix();
+
+        final String finalPrefix = prefix;
+        prefix += Optional.ofNullable(this.overseerService.getPath(method.getDeclaringClass()))
+                .map(o -> {
+                    String v = o.value();
+
+                    if (v.startsWith("/") && finalPrefix.endsWith("/")) {
+                        v = v.substring(1);
+                    } else if (!v.startsWith("/") && !finalPrefix.endsWith("/")) {
+                        v = "/" + v;
+                    }
+
+                    return v;
+                })
+                .orElse("");
         String path = getPath(annotation);
 
         if (!prefix.endsWith("/")) {
