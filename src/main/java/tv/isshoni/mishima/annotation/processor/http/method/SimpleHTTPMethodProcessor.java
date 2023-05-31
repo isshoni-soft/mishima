@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http.method;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.araragi.string.format.StringFormatter;
 import tv.isshoni.araragi.string.format.StringToken;
@@ -22,7 +23,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     protected final List<Class<? extends Annotation>> incompatible;
 
-    protected final IWinryContext context;
+    protected final Constant<IWinryContext> context;
 
     protected final HTTPService httpService;
 
@@ -37,7 +38,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
         this.httpService = httpService;
         this.http = http;
         this.overseerService = overseerService;
-        this.context = context;
+        this.context = new Constant<>(context);
         this.clazz = clazz;
         this.incompatible = Streams.to(HTTPMethod.getAnnotations())
                 .filter(c -> !c.equals(clazz))
@@ -116,7 +117,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

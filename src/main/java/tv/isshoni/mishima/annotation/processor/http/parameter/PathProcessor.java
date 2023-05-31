@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http.parameter;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
@@ -13,10 +14,10 @@ import java.util.Map;
 
 public class PathProcessor implements IWinryAdvancedAnnotationProcessor<Path, String> {
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     public PathProcessor(@Inject IWinryContext context) {
-        this.context = context;
+        this.context = new Constant<>(context);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class PathProcessor implements IWinryAdvancedAnnotationProcessor<Path, St
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

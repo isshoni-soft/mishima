@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.mishima.annotation.http.Overseer;
 import tv.isshoni.mishima.protocol.http.OverseerService;
 import tv.isshoni.winry.api.annotation.Inject;
@@ -10,12 +11,12 @@ import tv.isshoni.winry.internal.model.meta.bytebuddy.IWrapperGenerator;
 
 public class OverseerProcessor implements IWinryAnnotationProcessor<Overseer> {
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     private final OverseerService service;
 
     public OverseerProcessor(@Inject IWinryContext context, @Inject OverseerService service) {
-        this.context = context;
+        this.context = new Constant<>(context);
         this.service = service;
     }
 
@@ -25,7 +26,7 @@ public class OverseerProcessor implements IWinryAnnotationProcessor<Overseer> {
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

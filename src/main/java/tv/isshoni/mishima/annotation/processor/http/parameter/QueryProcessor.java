@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http.parameter;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
@@ -15,12 +16,12 @@ import java.util.Map;
 
 public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, Object> {
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     private final HTTPService service;
 
     public QueryProcessor(@Inject IWinryContext context, @Inject HTTPService service) {
-        this.context = context;
+        this.context = new Constant<>(context);
         this.service = service;
     }
 
@@ -47,7 +48,7 @@ public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, 
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

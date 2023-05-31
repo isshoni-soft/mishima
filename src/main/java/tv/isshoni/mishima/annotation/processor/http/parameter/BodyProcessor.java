@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http.parameter;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
 import tv.isshoni.mishima.exception.parameter.MissingBodyException;
 import tv.isshoni.mishima.exception.parameter.NeedsContentTypeException;
@@ -16,12 +17,12 @@ import java.util.Map;
 
 public class BodyProcessor implements IWinryAdvancedAnnotationProcessor<Body, Object> {
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     private final HTTPService service;
 
     public BodyProcessor(@Inject IWinryContext context, @Inject HTTPService service) {
-        this.context = context;
+        this.context = new Constant<>(context);
         this.service = service;
     }
 
@@ -48,7 +49,7 @@ public class BodyProcessor implements IWinryAdvancedAnnotationProcessor<Body, Ob
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

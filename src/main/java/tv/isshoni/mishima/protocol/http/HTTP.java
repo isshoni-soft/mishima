@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.protocol.http;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
@@ -60,12 +61,12 @@ public class HTTP implements IHTTPProtocol, IContextual {
 
     private final MishimaHTTPConfigEvent httpConfig;
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     public HTTP(@Context IWinryContext context) {
         this.httpConfig = new MishimaHTTPConfigEvent();
-        this.context = context;
-        this.logger = this.context.createLogger("HTTP");
+        this.context = new Constant<>(context);
+        this.logger = this.context.get().createLogger("HTTP");
 
         try {
             context.getEventBus().fire(this.httpConfig);
@@ -77,7 +78,7 @@ public class HTTP implements IHTTPProtocol, IContextual {
     public void init() {
         logger.info("Registering HTTP annotations...");
 
-        IWinryAnnotationManager annotationManager = this.context.getAnnotationManager();
+        IWinryAnnotationManager annotationManager = this.context.get().getAnnotationManager();
         annotationManager.discoverAnnotation(Overseer.class);
         annotationManager.discoverAnnotation(Serialization.class);
         annotationManager.discoverAnnotation(GET.class);
@@ -291,7 +292,7 @@ public class HTTP implements IHTTPProtocol, IContextual {
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }

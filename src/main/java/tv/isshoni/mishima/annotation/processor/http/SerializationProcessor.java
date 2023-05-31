@@ -1,5 +1,6 @@
 package tv.isshoni.mishima.annotation.processor.http;
 
+import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.mishima.annotation.http.Serialization;
 import tv.isshoni.mishima.protocol.http.IHTTPDeserializer;
@@ -14,11 +15,11 @@ public class SerializationProcessor implements IWinryAnnotationProcessor<Seriali
 
     private final HTTPService service;
 
-    private final IWinryContext context;
+    private final Constant<IWinryContext> context;
 
     public SerializationProcessor(@Inject HTTPService service, @Inject IWinryContext context) {
         this.service = service;
-        this.context = context;
+        this.context = new Constant<>(context);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class SerializationProcessor implements IWinryAnnotationProcessor<Seriali
     }
 
     @Override
-    public IWinryContext getContext() {
+    public Constant<IWinryContext> getContext() {
         return this.context;
     }
 }
