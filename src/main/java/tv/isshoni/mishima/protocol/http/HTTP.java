@@ -29,7 +29,7 @@ import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.exception.ExceptionHandler;
 import tv.isshoni.winry.api.annotation.parameter.Context;
-import tv.isshoni.winry.api.annotation.transformer.Async;
+import tv.isshoni.winry.api.async.IWinryAsyncManager;
 import tv.isshoni.winry.api.context.IContextual;
 import tv.isshoni.winry.api.context.IEventBus;
 import tv.isshoni.winry.api.context.IExceptionManager;
@@ -96,114 +96,115 @@ public class HTTP implements IHTTPProtocol, IContextual {
     }
 
     @Listener(ConnectionEvent.class)
-    @Async
-    public void handleNewConnection(@Event ConnectionEvent event) {
-        Connection connection = event.getConnection();
+    public void handleNewConnection(@Event ConnectionEvent event, @Inject IWinryAsyncManager asyncManager) {
+        asyncManager.submit(() -> {
+            Connection connection = event.getConnection();
 
-        // process first line
-        String line = connection.readLine();
-        String[] tokens = line.split(" ");
+            // process first line
+            String line = connection.readLine();
+            String[] tokens = line.split(" ");
 
-        if (tokens.length != 3) {
-            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
-                    "I cannot understand you. (malformed first line)"), connection);
-            logger.error("Encountered malformed first line: " + line);
-            throw new HTTPFormatException("malformed first line");
-        }
-
-        HTTPMethod method;
-        try {
-            method = HTTPMethod.valueOf(tokens[0].toUpperCase());
-        } catch (IllegalArgumentException e) {
-            String responseLine = tokens[0] + " is not a parsable HTTP method";
-
-            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
-                    responseLine), connection);
-            throw new HTTPFormatException(responseLine);
-        }
-
-        HTTPHeaders requestHeaders = new HTTPHeaders();
-
-        // read all headers, read until newline between headers & body is encountered.
-        String dataLine;
-        do {
-            dataLine = connection.readLine();
-
-            if (dataLine.contains(":")) {
-                String[] headerTokens = dataLine.split(": ");
-
-                requestHeaders.addHeader(headerTokens[0], headerTokens[1]);
+            if (tokens.length != 3) {
+                respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                        "I cannot understand you. (malformed first line)"), connection);
+                logger.error("Encountered malformed first line: " + line);
+                throw new HTTPFormatException("malformed first line");
             }
-        } while (dataLine.length() != 0);
 
-        // find content-length header & read body.
-        String body = "";
-        if (method.hasIncomingBody() && requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
-            int contentLength = Integer.parseInt(requestHeaders.getHeader(HTTPHeaders.CONTENT_LENGTH));
+            HTTPMethod method;
+            try {
+                method = HTTPMethod.valueOf(tokens[0].toUpperCase());
+            } catch (IllegalArgumentException e) {
+                String responseLine = tokens[0] + " is not a parsable HTTP method";
 
-            body = connection.read(contentLength);
-        }
+                respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                        responseLine), connection);
+                throw new HTTPFormatException(responseLine);
+            }
 
-        String[] versionTokens = tokens[2].split("/");
+            HTTPHeaders requestHeaders = new HTTPHeaders();
 
-        if (versionTokens.length != 2) {
-            String responseLine = tokens[2] + " is not a parsable HTTP version!";
+            // read all headers, read until newline between headers & body is encountered.
+            String dataLine;
+            do {
+                dataLine = connection.readLine();
 
-            respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
-                    responseLine), connection);
-            throw new HTTPFormatException(responseLine);
-        }
+                if (dataLine.contains(":")) {
+                    String[] headerTokens = dataLine.split(": ");
 
-        String httpVersion = versionTokens[1];
-        String path = tokens[1]; // TODO: Apply basic URL regex checks
-        Map<String, String> queryParameters = new HashMap<>();
-
-        // parse query parameters
-        if (path.contains("?")) {
-            int endPath = path.lastIndexOf("?");
-            String queryParams = path.substring(endPath + 1);
-            String[] serializedEntries = queryParams.split("&");
-
-            Streams.to(serializedEntries).forEach(e -> {
-                String[] t = e.split("=");
-
-                if (t.length != 2) {
-                    String responseLine = "Malformed query parameter!";
-
-                    respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
-                            responseLine), connection);
-                    throw new HTTPFormatException(responseLine);
+                    requestHeaders.addHeader(headerTokens[0], headerTokens[1]);
                 }
+            } while (dataLine.length() != 0);
 
-                queryParameters.put(t[0], t[1]);
-            });
+            // find content-length header & read body.
+            String body = "";
+            if (method.hasIncomingBody() && requestHeaders.hasHeader(HTTPHeaders.CONTENT_LENGTH)) {
+                int contentLength = Integer.parseInt(requestHeaders.getHeader(HTTPHeaders.CONTENT_LENGTH));
 
-            path = path.substring(0, path.lastIndexOf("?"));
-        }
+                body = connection.read(contentLength);
+            }
 
-        if (!path.endsWith("/")) {
-            path = path + "/";
-        }
+            String[] versionTokens = tokens[2].split("/");
 
-        // parse path parameters
-        Map<String, String> pathParams = new HashMap<>();
-        if (this.service.hasHandler(method, path)) {
-            this.service.getTokenMapForMethod(method).getTokenized(path).getSecond().forEach(t ->
-                    pathParams.put(t.getKey(), t.getReplacement()));
-        }
+            if (versionTokens.length != 2) {
+                String responseLine = tokens[2] + " is not a parsable HTTP version!";
 
-        ReadonlyMishimaHTTPConfig readonlyConfig = new ReadonlyMishimaHTTPConfig(this.httpConfig);
-        HTTPRequest request;
-        // create request object, either with body or without.
-        if (body.length() > 0) {
-            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    body.trim(), readonlyConfig);
-        } else {
-            request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
-                    readonlyConfig);
-        }
+                respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                        responseLine), connection);
+                throw new HTTPFormatException(responseLine);
+            }
 
-        handleConnection(request, connection);
+            String httpVersion = versionTokens[1];
+            String path = tokens[1]; // TODO: Apply basic URL regex checks
+            Map<String, String> queryParameters = new HashMap<>();
+
+            // parse query parameters
+            if (path.contains("?")) {
+                int endPath = path.lastIndexOf("?");
+                String queryParams = path.substring(endPath + 1);
+                String[] serializedEntries = queryParams.split("&");
+
+                Streams.to(serializedEntries).forEach(e -> {
+                    String[] t = e.split("=");
+
+                    if (t.length != 2) {
+                        String responseLine = "Malformed query parameter!";
+
+                        respond(this.objectFactory.construct(HTTPResponse.class, MIMEType.TEXT, HTTPStatus.BAD_REQUEST,
+                                responseLine), connection);
+                        throw new HTTPFormatException(responseLine);
+                    }
+
+                    queryParameters.put(t[0], t[1]);
+                });
+
+                path = path.substring(0, path.lastIndexOf("?"));
+            }
+
+            if (!path.endsWith("/")) {
+                path = path + "/";
+            }
+
+            // parse path parameters
+            Map<String, String> pathParams = new HashMap<>();
+            if (this.service.hasHandler(method, path)) {
+                this.service.getTokenMapForMethod(method).getTokenized(path).getSecond().forEach(t ->
+                        pathParams.put(t.getKey(), t.getReplacement()));
+            }
+
+            ReadonlyMishimaHTTPConfig readonlyConfig = new ReadonlyMishimaHTTPConfig(this.httpConfig);
+            HTTPRequest request;
+            // create request object, either with body or without.
+            if (body.length() > 0) {
+                request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
+                        body.trim(), readonlyConfig);
+            } else {
+                request = new HTTPRequest(method, path, httpVersion, queryParameters, pathParams, requestHeaders,
+                        readonlyConfig);
+            }
+
+            handleConnection(request, connection);
+        });
     }
 
     @ExceptionHandler(HTTPProtocolExceptionHandler.class)

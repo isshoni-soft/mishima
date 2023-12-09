@@ -4,6 +4,7 @@ import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.mishima.annotation.http.Overseer;
 import tv.isshoni.mishima.protocol.http.OverseerService;
 import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedClass;
@@ -15,7 +16,7 @@ public class OverseerProcessor implements IWinryAnnotationProcessor<Overseer> {
 
     private final OverseerService service;
 
-    public OverseerProcessor(@Inject IWinryContext context, @Inject OverseerService service) {
+    public OverseerProcessor(@Context IWinryContext context, @Inject OverseerService service) {
         this.context = new Constant<>(context);
         this.service = service;
     }

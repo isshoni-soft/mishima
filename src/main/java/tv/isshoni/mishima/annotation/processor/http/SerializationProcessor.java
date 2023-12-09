@@ -7,6 +7,7 @@ import tv.isshoni.mishima.protocol.http.IHTTPDeserializer;
 import tv.isshoni.mishima.protocol.http.IHTTPSerializer;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.meta.IAnnotatedClass;
@@ -17,7 +18,7 @@ public class SerializationProcessor implements IWinryAnnotationProcessor<Seriali
 
     private final Constant<IWinryContext> context;
 
-    public SerializationProcessor(@Inject HTTPService service, @Inject IWinryContext context) {
+    public SerializationProcessor(@Context IWinryContext context, @Inject HTTPService service) {
         this.service = service;
         this.context = new Constant<>(context);
     }

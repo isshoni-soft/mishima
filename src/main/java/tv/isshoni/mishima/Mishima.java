@@ -13,6 +13,7 @@ import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
 import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryPreInitEvent;
 import tv.isshoni.winry.api.service.VersionService;
@@ -31,12 +32,12 @@ public class Mishima {
 
     @Logger("Mishima") private AraragiLogger logger;
 
-    @Inject private IWinryContext context;
+    @Context private IWinryContext context;
 
     private MishimaServerConfigEvent serverConfig;
 
     @Listener(WinryPreInitEvent.class)
-    public void winryPreInit(@Inject IWinryContext context, @Inject VersionService service) throws Throwable {
+    public void winryPreInit(@Context IWinryContext context, @Inject VersionService service) throws Throwable {
         logger.info("Loading Mishima v${version}...", Maps.ofPairs(
                 Pair.of("version", () -> service.getVersion("mishima").get())));
 

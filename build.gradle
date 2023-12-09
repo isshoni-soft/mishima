@@ -27,7 +27,6 @@ dependencies {
 //    }
 
     api "tv.isshoni:winry:$winry_version"
-    api 'com.google.code.gson:gson:2.10.1'
 
     testImplementation "junit:junit:$junit_version"
 }

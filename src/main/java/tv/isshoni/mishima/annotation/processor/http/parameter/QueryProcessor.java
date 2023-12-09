@@ -8,6 +8,7 @@ import tv.isshoni.mishima.protocol.http.HTTPRequest;
 import tv.isshoni.mishima.protocol.http.IHTTPDeserializer;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.processor.IWinryAdvancedAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
 
@@ -20,7 +21,7 @@ public class QueryProcessor implements IWinryAdvancedAnnotationProcessor<Query, 
 
     private final HTTPService service;
 
-    public QueryProcessor(@Inject IWinryContext context, @Inject HTTPService service) {
+    public QueryProcessor(@Context IWinryContext context, @Inject HTTPService service) {
         this.context = new Constant<>(context);
         this.service = service;
     }

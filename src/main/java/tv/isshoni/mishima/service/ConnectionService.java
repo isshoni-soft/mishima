@@ -4,10 +4,10 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.util.FileUtil;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
-import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryShutdownEvent;
 
@@ -30,7 +30,7 @@ public class ConnectionService {
 
     @Logger("ConnectionService") private AraragiLogger logger;
 
-    @Inject private IWinryContext context;
+    @Context private IWinryContext context;
 
     private Thread thread;
 

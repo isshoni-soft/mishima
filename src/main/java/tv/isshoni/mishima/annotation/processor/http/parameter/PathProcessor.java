@@ -5,7 +5,7 @@ import tv.isshoni.araragi.stream.Streams;
 import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.exception.parameter.MissingRequiredParameterException;
 import tv.isshoni.mishima.protocol.http.HTTPRequest;
-import tv.isshoni.winry.api.annotation.Inject;
+import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.annotation.processor.IWinryAdvancedAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
 
@@ -16,7 +16,7 @@ public class PathProcessor implements IWinryAdvancedAnnotationProcessor<Path, St
 
     private final Constant<IWinryContext> context;
 
-    public PathProcessor(@Inject IWinryContext context) {
+    public PathProcessor(@Context IWinryContext context) {
         this.context = new Constant<>(context);
     }
 
