@@ -1,13 +1,10 @@
-import org.junit.Test;
 import tv.isshoni.winry.api.Winry;
 
 import java.util.concurrent.ExecutionException;
 
 public class TestRunner {
 
-    @Test
-
-    public void testServer() throws ExecutionException, InterruptedException {
+    public static void main(String... args) throws ExecutionException, InterruptedException {
         Winry.bootstrap(TestServer.class);
     }
 }
