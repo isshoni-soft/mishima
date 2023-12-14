@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Weight(5)
 @Processor(QueryProcessor.class)
-public @interface Query {
+public @interface QueryParam {
 
     String value();
 

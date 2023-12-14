@@ -1,7 +1,7 @@
 package tv.isshoni.mishima.annotation.processor.http.parameter;
 
 import tv.isshoni.araragi.data.Constant;
-import tv.isshoni.mishima.annotation.http.parameter.Body;
+import tv.isshoni.mishima.annotation.http.parameter.BodyParam;
 import tv.isshoni.mishima.exception.parameter.MissingBodyException;
 import tv.isshoni.mishima.exception.parameter.NeedsContentTypeException;
 import tv.isshoni.mishima.protocol.http.HTTPHeaders;
@@ -16,7 +16,7 @@ import tv.isshoni.winry.api.context.IWinryContext;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
-public class BodyProcessor implements IWinryAdvancedAnnotationProcessor<Body, Object> {
+public class BodyProcessor implements IWinryAdvancedAnnotationProcessor<BodyParam, Object> {
 
     private final Constant<IWinryContext> context;
 
@@ -28,7 +28,7 @@ public class BodyProcessor implements IWinryAdvancedAnnotationProcessor<Body, Ob
     }
 
     @Override
-    public Object supply(Body annotation, Object previous, Parameter parameter, Map<String, Object> runtimeContext) {
+    public Object supply(BodyParam annotation, Object previous, Parameter parameter, Map<String, Object> runtimeContext) {
         if (!runtimeContext.containsKey(HTTPRequest.BODY_PARAMETER_KEY)) {
             throw new MissingBodyException();
         }

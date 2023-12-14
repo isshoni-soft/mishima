@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Weight(5)
 @Processor(PathProcessor.class)
-public @interface Path {
+public @interface PathParam {
 
     String value();
 }

@@ -4,8 +4,8 @@ import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.POST;
-import tv.isshoni.mishima.annotation.http.parameter.Body;
-import tv.isshoni.mishima.annotation.http.parameter.Query;
+import tv.isshoni.mishima.annotation.http.parameter.BodyParam;
+import tv.isshoni.mishima.annotation.http.parameter.QueryParam;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.protocol.http.MIMEType;
@@ -36,7 +36,7 @@ public class TestServer {
     }
 
     @GET("/")
-    public String index(@Query("v") QueryDTO dto) {
+    public String index(@QueryParam("v") QueryDTO dto) {
         if (dto == null) {
             return "Could not find user!";
         }
@@ -45,12 +45,12 @@ public class TestServer {
     }
 
     @POST("/")
-    public String postIndex(@Body(MIMEType.TEXT) String body) {
+    public String postIndex(@BodyParam(MIMEType.TEXT) String body) {
         return "Echo: " + body;
     }
 
     @GET("/login")
-    public JsonObject login(@Body(MIMEType.TEXT) String user) {
+    public JsonObject login(@BodyParam(MIMEType.TEXT) String user) {
         JsonObject object = new JsonObject();
         object.addProperty("new_user", user);
 
@@ -58,7 +58,7 @@ public class TestServer {
     }
 
     @GET("/testDTO")
-    public TestDTO testDTO(@Query("value") String value) {
+    public TestDTO testDTO(@QueryParam("value") String value) {
         return new TestDTO(value);
     }
 

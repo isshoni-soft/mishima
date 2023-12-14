@@ -11,8 +11,9 @@ import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.OPTIONS;
 import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.method.PUT;
-import tv.isshoni.mishima.annotation.http.parameter.Body;
-import tv.isshoni.mishima.annotation.http.parameter.Query;
+import tv.isshoni.mishima.annotation.http.parameter.BodyParam;
+import tv.isshoni.mishima.annotation.http.parameter.PathParam;
+import tv.isshoni.mishima.annotation.http.parameter.QueryParam;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
 import tv.isshoni.mishima.event.config.readonly.ReadonlyMishimaHTTPConfig;
@@ -85,9 +86,9 @@ public class HTTP implements IHTTPProtocol, IContextual {
         annotationManager.discoverAnnotation(OPTIONS.class);
         annotationManager.discoverAnnotation(PUT.class);
         annotationManager.discoverAnnotation(DELETE.class);
-        annotationManager.discoverAnnotation(Body.class);
-        annotationManager.discoverAnnotation(tv.isshoni.mishima.annotation.http.parameter.Path.class);
-        annotationManager.discoverAnnotation(Query.class);
+        annotationManager.discoverAnnotation(BodyParam.class);
+        annotationManager.discoverAnnotation(PathParam.class);
+        annotationManager.discoverAnnotation(QueryParam.class);
     }
 
     public MishimaHTTPConfigEvent getHttpConfig() {

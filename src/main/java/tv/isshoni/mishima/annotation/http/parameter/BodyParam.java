@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Weight(5)
 @Processor(BodyProcessor.class)
-public @interface Body {
+public @interface BodyParam {
 
     MIMEType value();
 }
