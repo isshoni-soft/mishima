@@ -8,7 +8,7 @@ import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.protocol.http.HTTP;
 import tv.isshoni.mishima.protocol.http.HTTPMethod;
 import tv.isshoni.mishima.protocol.http.MIMEType;
-import tv.isshoni.mishima.protocol.http.OverseerService;
+import tv.isshoni.mishima.protocol.http.PathService;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.processor.IWinryAnnotationProcessor;
 import tv.isshoni.winry.api.context.IWinryContext;
@@ -29,15 +29,15 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
 
     protected final HTTP http;
 
-    protected final OverseerService overseerService;
+    protected final PathService pathService;
 
     protected final Class<A> clazz;
 
-    public SimpleHTTPMethodProcessor(HTTPService httpService, HTTP http, OverseerService overseerService,
+    public SimpleHTTPMethodProcessor(HTTPService httpService, HTTP http, PathService pathService,
                                      IWinryContext context, Class<A> clazz) {
         this.httpService = httpService;
         this.http = http;
-        this.overseerService = overseerService;
+        this.pathService = pathService;
         this.context = new Constant<>(context);
         this.clazz = clazz;
         this.incompatible = Streams.to(HTTPMethod.getAnnotations())
@@ -68,7 +68,7 @@ public abstract class SimpleHTTPMethodProcessor<A extends Annotation> implements
         String prefix = this.http.getHttpConfig().getPrefix();
 
         final String finalPrefix = prefix;
-        prefix += Optional.ofNullable(this.overseerService.getPath(method.getDeclaringClass()))
+        prefix += Optional.ofNullable(this.pathService.getPath(method.getDeclaringClass()))
                 .map(o -> {
                     String v = o.value();
 

@@ -1,6 +1,6 @@
 package tv.isshoni.mishima.protocol.http;
 
-import tv.isshoni.mishima.annotation.http.Overseer;
+import tv.isshoni.mishima.annotation.http.Path;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.meta.IAnnotatedClass;
 
@@ -8,27 +8,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Injected
-public class OverseerService {
+public class PathService {
 
-    private final Map<IAnnotatedClass, Overseer> paths;
+    private final Map<IAnnotatedClass, Path> paths;
 
-    public OverseerService() {
+    public PathService() {
         this.paths = new HashMap<>();
     }
 
-    public void register(IAnnotatedClass clazz, Overseer overseer) {
+    public void register(IAnnotatedClass clazz, Path path) {
         if (this.paths.containsKey(clazz)) {
-            Overseer previous = this.paths.get(clazz);
+            Path previous = this.paths.get(clazz);
 
-            if (previous.weight() - overseer.weight() < 0) {
+            if (previous.weight() - path.weight() < 0) {
                 return;
             }
         }
 
-        this.paths.put(clazz, overseer);
+        this.paths.put(clazz, path);
     }
 
-    public Overseer getPath(IAnnotatedClass clazz) {
+    public Path getPath(IAnnotatedClass clazz) {
         return this.paths.get(clazz);
     }
 

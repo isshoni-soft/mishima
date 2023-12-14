@@ -6,7 +6,7 @@ import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.event.MishimaInitEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.mishima.protocol.http.HTTP;
-import tv.isshoni.mishima.protocol.http.OverseerService;
+import tv.isshoni.mishima.protocol.http.PathService;
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
@@ -47,7 +47,7 @@ public class Mishima {
 
         if (this.serverConfig.isHTTP()) {
             context.addSingleton(HTTPService.class);
-            context.addSingleton(OverseerService.class);
+            context.addSingleton(PathService.class);
             context.addSingleton(HTTP.class);
 
             context.getInstanceManager().getSingletonInjection(HTTP.class).init();

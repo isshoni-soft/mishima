@@ -19,7 +19,7 @@ import tv.isshoni.winry.api.context.IWinryContext;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
-           manualLoad = { Mishima.class, QueryDTODeserializer.class, UsersOverseer.class }),
+           manualLoad = { Mishima.class, QueryDTODeserializer.class, UsersPath.class }),
            defaultLevel = Level.DEBUG)
 public class TestServer {
 

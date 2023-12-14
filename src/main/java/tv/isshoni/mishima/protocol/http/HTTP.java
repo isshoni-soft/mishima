@@ -4,7 +4,7 @@ import tv.isshoni.araragi.data.Constant;
 import tv.isshoni.araragi.exception.Exceptions;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.araragi.stream.Streams;
-import tv.isshoni.mishima.annotation.http.Overseer;
+import tv.isshoni.mishima.annotation.http.Path;
 import tv.isshoni.mishima.annotation.http.Serialization;
 import tv.isshoni.mishima.annotation.http.method.DELETE;
 import tv.isshoni.mishima.annotation.http.method.GET;
@@ -12,7 +12,6 @@ import tv.isshoni.mishima.annotation.http.method.OPTIONS;
 import tv.isshoni.mishima.annotation.http.method.POST;
 import tv.isshoni.mishima.annotation.http.method.PUT;
 import tv.isshoni.mishima.annotation.http.parameter.Body;
-import tv.isshoni.mishima.annotation.http.parameter.Path;
 import tv.isshoni.mishima.annotation.http.parameter.Query;
 import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaHTTPConfigEvent;
@@ -79,7 +78,7 @@ public class HTTP implements IHTTPProtocol, IContextual {
         logger.info("Registering HTTP annotations...");
 
         IWinryAnnotationManager annotationManager = this.context.get().getAnnotationManager();
-        annotationManager.discoverAnnotation(Overseer.class);
+        annotationManager.discoverAnnotation(Path.class);
         annotationManager.discoverAnnotation(Serialization.class);
         annotationManager.discoverAnnotation(GET.class);
         annotationManager.discoverAnnotation(POST.class);
@@ -87,7 +86,7 @@ public class HTTP implements IHTTPProtocol, IContextual {
         annotationManager.discoverAnnotation(PUT.class);
         annotationManager.discoverAnnotation(DELETE.class);
         annotationManager.discoverAnnotation(Body.class);
-        annotationManager.discoverAnnotation(Path.class);
+        annotationManager.discoverAnnotation(tv.isshoni.mishima.annotation.http.parameter.Path.class);
         annotationManager.discoverAnnotation(Query.class);
     }
 
