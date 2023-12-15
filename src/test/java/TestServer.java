@@ -27,7 +27,8 @@ public class TestServer {
 
     @Listener(MishimaServerConfigEvent.class)
     public void configureMishima(@Event MishimaServerConfigEvent event) {
-        event.http().useTLS("testkey.jks", "password").port(8080);
+//        event.http().useTLS("testkey.jks", "password").port(8080);
+        event.http().port(8080);
     }
 
     @Listener(MishimaHTTPConfigEvent.class)
