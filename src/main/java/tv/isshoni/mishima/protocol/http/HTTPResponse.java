@@ -1,7 +1,6 @@
 package tv.isshoni.mishima.protocol.http;
 
-import tv.isshoni.winry.api.annotation.Inject;
-import tv.isshoni.winry.api.service.ObjectFactory;
+import tv.isshoni.winry.api.annotation.parameter.New;
 
 public class HTTPResponse {
 
@@ -13,15 +12,15 @@ public class HTTPResponse {
 
     private final String body;
 
-    public HTTPResponse(HTTPStatus code, MIMEType mimeType, HTTPHeaders headers, String body) {
+    public HTTPResponse(HTTPStatus code, MIMEType mimeType, @New HTTPHeaders headers, String body) {
         this.code = code;
         this.mimeType = mimeType;
         this.headers = headers;
         this.body = body;
     }
 
-    public HTTPResponse(@Inject ObjectFactory factory, HTTPStatus code, MIMEType mimeType, String body) {
-        this(code, mimeType, factory.construct(HTTPHeaders.class), body);
+    public HTTPResponse(HTTPStatus code, @New HTTPHeaders headers, String body) {
+        this(code, MIMEType.JSON, headers, body);
     }
 
     public HTTPHeaders getHeaders() {

@@ -2,7 +2,7 @@ package tv.isshoni.mishima.protocol.http;
 
 import tv.isshoni.mishima.protocol.http.handler.HTTPService;
 import tv.isshoni.winry.api.annotation.Inject;
-import tv.isshoni.winry.api.service.ObjectFactory;
+import tv.isshoni.winry.api.annotation.parameter.New;
 
 public class SerializedHTTPResponse extends HTTPResponse {
 
@@ -10,7 +10,7 @@ public class SerializedHTTPResponse extends HTTPResponse {
 
     private final HTTPService service;
 
-    public SerializedHTTPResponse(@Inject HTTPService service, HTTPStatus code, MIMEType mimeType, HTTPHeaders headers,
+    public SerializedHTTPResponse(@Inject HTTPService service, HTTPStatus code, MIMEType mimeType, @New HTTPHeaders headers,
                                   Object body) {
         super(code, mimeType, headers, null);
 
@@ -18,9 +18,8 @@ public class SerializedHTTPResponse extends HTTPResponse {
         this.body = body;
     }
 
-    public SerializedHTTPResponse(@Inject HTTPService service, @Inject ObjectFactory factory, HTTPStatus code,
-                                  Object body) {
-        this(service, code, MIMEType.TEXT, factory.construct(HTTPHeaders.class), body);
+    public SerializedHTTPResponse(@Inject HTTPService service, @New HTTPHeaders headers, HTTPStatus code, Object body) {
+        this(service, code, MIMEType.JSON, headers, body);
     }
 
     @Override
