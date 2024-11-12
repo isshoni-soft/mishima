@@ -13,12 +13,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'tv.isshoni:mishima:0.8.9'
+    implementation 'tv.isshoni:mishima:0.8.15'
 }
 ```
 
 TODO List
 ---------
+- [ ] Add safe shutdown procedure
 - [x] Socket Server
   - [x] SSL
 - [x] Event

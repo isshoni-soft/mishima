@@ -3,7 +3,7 @@ package tv.isshoni.mishima.protocol.http;
 import tv.isshoni.araragi.logging.AraragiLogger;
 import tv.isshoni.mishima.annotation.http.Path;
 import tv.isshoni.winry.api.annotation.Injected;
-import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.logging.Logger;
 import tv.isshoni.winry.api.meta.IAnnotatedClass;
 
 import java.util.HashMap;

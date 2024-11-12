@@ -1,6 +1,5 @@
 import com.google.gson.JsonObject;
 import tv.isshoni.araragi.logging.AraragiLogger;
-import tv.isshoni.araragi.logging.model.level.Level;
 import tv.isshoni.mishima.Mishima;
 import tv.isshoni.mishima.annotation.http.method.GET;
 import tv.isshoni.mishima.annotation.http.method.POST;
@@ -13,14 +12,13 @@ import tv.isshoni.winry.api.annotation.Bootstrap;
 import tv.isshoni.winry.api.annotation.Event;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
-import tv.isshoni.winry.api.annotation.Logger;
-import tv.isshoni.winry.api.annotation.parameter.Context;
-import tv.isshoni.winry.api.context.IWinryContext;
+import tv.isshoni.winry.api.annotation.logging.LogLevel;
+import tv.isshoni.winry.api.annotation.logging.Logger;
 
 @Bootstrap(name = "Test Server",
            loader = @Loader(
            manualLoad = { Mishima.class, QueryDTODeserializer.class, UsersPath.class }),
-           defaultLevel = Level.DEBUG)
+           defaultLevel = @LogLevel(name = "DEBUG", weight = 0))
 public class TestServer {
 
     @Logger("TestServer") private AraragiLogger logger;
@@ -68,10 +66,12 @@ public class TestServer {
         return "Other user!";
     }
 
-    @GET("/shutdown")
-    public String shutdown(@Context IWinryContext context) {
-        context.shutdown();
-
-        return "Shutdown!";
-    }
+    // winry context shutdown seems to break something with the socket causing a hang and error state.
+    // be careful with that.
+//    @GET("/shutdown")
+//    public String shutdown(@Context IWinryContext context) {
+//        context.shutdown();
+//
+//        return "Shutdown!";
+//    }
 }

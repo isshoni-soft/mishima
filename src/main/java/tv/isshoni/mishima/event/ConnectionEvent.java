@@ -1,8 +1,8 @@
 package tv.isshoni.mishima.event;
 
+import tv.isshoni.araragi.logging.model.ILoggerFactory;
 import tv.isshoni.mishima.protocol.Connection;
 import tv.isshoni.winry.api.annotation.Event;
-import tv.isshoni.winry.api.context.ILoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;

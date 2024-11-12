@@ -12,7 +12,7 @@ import tv.isshoni.mishima.service.ConnectionService;
 import tv.isshoni.winry.api.annotation.Inject;
 import tv.isshoni.winry.api.annotation.Listener;
 import tv.isshoni.winry.api.annotation.Loader;
-import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.logging.Logger;
 import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryPreInitEvent;

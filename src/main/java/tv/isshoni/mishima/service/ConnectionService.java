@@ -6,7 +6,7 @@ import tv.isshoni.mishima.event.ConnectionEvent;
 import tv.isshoni.mishima.event.config.MishimaServerConfigEvent;
 import tv.isshoni.winry.api.annotation.Injected;
 import tv.isshoni.winry.api.annotation.Listener;
-import tv.isshoni.winry.api.annotation.Logger;
+import tv.isshoni.winry.api.annotation.logging.Logger;
 import tv.isshoni.winry.api.annotation.parameter.Context;
 import tv.isshoni.winry.api.context.IWinryContext;
 import tv.isshoni.winry.api.event.WinryShutdownEvent;
